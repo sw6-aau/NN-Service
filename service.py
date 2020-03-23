@@ -55,9 +55,10 @@ class Fields(Resource):
 # The "/readme" endpoint
 class Readme(Resource):
     def get(self):
+        docText = open("static/documentation.md", "r").read()
         return {
-            "chart_type": "text",
-            "content": "# Time-Series NN Forecasting"
+            "chart_type": "markdown",
+            "content": docText
         }
 
 # The "/render" endpoint
