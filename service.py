@@ -55,16 +55,61 @@ class Fields(Resource):
 # The "/readme" endpoint
 class Readme(Resource):
     def get(self):
-        docText = open("static/documentation.md", "r").read()
         return {
             "chart_type": "markdown",
-            "content": docText
+            "content": open("static/documentation.md", "r").read()
         }
 
 # The "/render" endpoint
 class Render(Resource):
     def post(self):
-        return "Hello from render"
+        return {
+            'chart_type': 'chart-js',
+            'content': {
+                'data': [
+                    {
+                        'data': [
+                            4,
+                            9,
+                            2
+                        ],
+                        'label': 'A'
+                    },
+                    {
+                        'data': [
+                            2,
+                            3,
+                            9
+                        ],
+                        'label': 'B'
+                    }
+                ],
+                'labels': [
+                    '1',
+                    '2',
+                    '3'
+                ],
+                'colors': [
+                    {
+                        'backgroundColor': 'rgba(148,159,177,0.2)',
+                        'borderColor': 'rgba(148,159,177,1)',
+                        'pointBackgroundColor': 'rgba(148,159,177,1)',
+                        'pointBorderColor': '#fff',
+                        'pointHoverBackgroundColor': '#fff',
+                        'pointHoverBorderColor': 'rgba(148,159,177,0.8)'
+                    },
+                    {
+                        'backgroundColor': 'rgba(77,83,96,0.2)',
+                        'borderColor': 'rgba(77,83,96,1)',
+                        'pointBackgroundColor': 'rgba(77,83,96,1)',
+                        'pointBorderColor': '#fff',
+                        'pointHoverBackgroundColor': '#fff',
+                        'pointHoverBorderColor': 'rgba(77,83,96,1)'
+                    }
+                ],
+                'type': 'line'
+            }
+        }
 
 # The "/data" endpoint
 class Data(Resource):
