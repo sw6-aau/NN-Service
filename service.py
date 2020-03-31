@@ -16,7 +16,7 @@ class Root(Resource):
 class Info(Resource):
     def get(self):
         return {
-            "id": "NN-Service", 
+            "id": "NN-Service",
             "name": "NN time-series predictions",
             "version": "2020v1",
             "category": 2,
@@ -32,7 +32,7 @@ class Info(Resource):
             }]
         }
 
-# The "/fields" endpoint 
+# The "/fields" endpoint
 class Fields(Resource):
     def get(self):
         return {
@@ -64,51 +64,128 @@ class Readme(Resource):
 class Render(Resource):
     def post(self):
         return {
-            'chart_type': 'chart-js',
-            'content': {
-                'data': [
+          'chart_type': 'time-series-data',
+          'content': {
+            "settings": {
+              "to_chart": "chart-js"
+            },
+            "data": {
+              "dataSetName": "Name of dataset",
+              "graphs": [
+                {
+                  "label": "Graph A",
+                  "data": [
                     {
-                        'data': [
-                            4,
-                            9,
-                            2
-                        ],
-                        'label': 'A'
+                      "x": 2,
+                      "y": 35
                     },
                     {
-                        'data': [
-                            2,
-                            3,
-                            9
-                        ],
-                        'label': 'B'
-                    }
-                ],
-                'labels': [
-                    '1',
-                    '2',
-                    '3'
-                ],
-                'colors': [
-                    {
-                        'backgroundColor': 'rgba(148,159,177,0.2)',
-                        'borderColor': 'rgba(148,159,177,1)',
-                        'pointBackgroundColor': 'rgba(148,159,177,1)',
-                        'pointBorderColor': '#fff',
-                        'pointHoverBackgroundColor': '#fff',
-                        'pointHoverBorderColor': 'rgba(148,159,177,0.8)'
+                      "x": 3,
+                      "y": 38
                     },
                     {
-                        'backgroundColor': 'rgba(77,83,96,0.2)',
-                        'borderColor': 'rgba(77,83,96,1)',
-                        'pointBackgroundColor': 'rgba(77,83,96,1)',
-                        'pointBorderColor': '#fff',
-                        'pointHoverBackgroundColor': '#fff',
-                        'pointHoverBorderColor': 'rgba(77,83,96,1)'
+                      "x": 4,
+                      "y": 43
+                    },
+                    {
+                      "x": 7,
+                      "y": 83
+                    },
+                    {
+                      "x": 8,
+                      "y": 42
+                    },
+                    {
+                      "x": 9,
+                      "y": 15
+                    },
+                    {
+                      "x": 9,
+                      "y": 32
+                    },
+                    {
+                      "x": 22,
+                      "y": 55
                     }
-                ],
-                'type': 'line'
+                  ]
+                },
+                {
+                  "label": "Graph B",
+                  "data": [
+                    {
+                      "x": 2,
+                      "y": 24
+                    },
+                    {
+                      "x": 3,
+                      "y": 15
+                    },
+                    {
+                      "x": 4,
+                      "y": 65
+                    },
+                    {
+                      "x": 7,
+                      "y": 78
+                    },
+                    {
+                      "x": 8,
+                      "y": 13
+                    },
+                    {
+                      "x": 9,
+                      "y": 12
+                    },
+                    {
+                      "x": 9,
+                      "y": 46
+                    },
+                    {
+                      "x": 22,
+                      "y": 69
+                    }
+                  ]
+                },
+                {
+                  "label": "Graph C",
+                  "data": [
+                    {
+                      "x": 2,
+                      "y": 54
+                    },
+                    {
+                      "x": 3,
+                      "y": 55
+                    },
+                    {
+                      "x": 4,
+                      "y": 65
+                    },
+                    {
+                      "x": 7,
+                      "y": 14
+                    },
+                    {
+                      "x": 8,
+                      "y": 68
+                    },
+                    {
+                      "x": 9,
+                      "y": 72
+                    },
+                    {
+                      "x": 9,
+                      "y": 92
+                    },
+                    {
+                      "x": 22,
+                      "y": 44
+                    }
+                  ]
+                }
+              ]
             }
+          }
         }
 
 # The "/data" endpoint
