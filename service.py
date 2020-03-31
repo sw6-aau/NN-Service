@@ -16,7 +16,7 @@ class Root(Resource):
 class Info(Resource):
     def get(self):
         return {
-            "id": "NN-Service", 
+            "id": "NN-Service",
             "name": "NN time-series predictions",
             "version": "2020v1",
             "category": 2,
@@ -32,7 +32,7 @@ class Info(Resource):
             }]
         }
 
-# The "/fields" endpoint 
+# The "/fields" endpoint
 class Fields(Resource):
     def get(self):
         return {
@@ -56,14 +56,137 @@ class Fields(Resource):
 class Readme(Resource):
     def get(self):
         return {
-            "chart_type": "text",
-            "content": "# Time-Series NN Forecasting"
+            "chart_type": "markdown",
+            "content": open("static/documentation.md", "r").read()
         }
 
 # The "/render" endpoint
 class Render(Resource):
     def post(self):
-        return "Hello from render"
+        return {
+          'chart_type': 'time-series-data',
+          'content': {
+            "settings": {
+              "to_chart": "chart-js"
+            },
+            "data": {
+              "dataSetName": "Name of dataset",
+              "graphs": [
+                {
+                  "label": "Graph A",
+                  "data": [
+                    {
+                      "x": 2,
+                      "y": 35
+                    },
+                    {
+                      "x": 3,
+                      "y": 38
+                    },
+                    {
+                      "x": 4,
+                      "y": 43
+                    },
+                    {
+                      "x": 7,
+                      "y": 83
+                    },
+                    {
+                      "x": 8,
+                      "y": 42
+                    },
+                    {
+                      "x": 9,
+                      "y": 15
+                    },
+                    {
+                      "x": 9,
+                      "y": 32
+                    },
+                    {
+                      "x": 22,
+                      "y": 55
+                    }
+                  ]
+                },
+                {
+                  "label": "Graph B",
+                  "data": [
+                    {
+                      "x": 2,
+                      "y": 24
+                    },
+                    {
+                      "x": 3,
+                      "y": 15
+                    },
+                    {
+                      "x": 4,
+                      "y": 65
+                    },
+                    {
+                      "x": 7,
+                      "y": 78
+                    },
+                    {
+                      "x": 8,
+                      "y": 13
+                    },
+                    {
+                      "x": 9,
+                      "y": 12
+                    },
+                    {
+                      "x": 9,
+                      "y": 46
+                    },
+                    {
+                      "x": 22,
+                      "y": 69
+                    }
+                  ]
+                },
+                {
+                  "label": "Graph C",
+                  "data": [
+                    {
+                      "x": 2,
+                      "y": 54
+                    },
+                    {
+                      "x": 3,
+                      "y": 55
+                    },
+                    {
+                      "x": 4,
+                      "y": 65
+                    },
+                    {
+                      "x": 7,
+                      "y": 14
+                    },
+                    {
+                      "x": 8,
+                      "y": 68
+                    },
+                    {
+                      "x": 9,
+                      "y": 72
+                    },
+                    {
+                      "x": 9,
+                      "y": 92
+                    },
+                    {
+                      "x": 22,
+                      "y": 44
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
 
 # The "/data" endpoint
 class Data(Resource):
