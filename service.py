@@ -67,7 +67,279 @@ class Render(Resource):
           'chart_type': 'time-series-data',
           'content': {
             "settings": {
-              "to_chart": "chart-js"
+              "to_chart": "generic-time-series",
+              "predictions": [
+                [
+                  {
+                    'data': [
+                      2,
+                      2,
+                      2
+                    ],
+                    'error': {
+                      'mae': 5,
+                      'smape': 6
+                    }
+                  },
+                  {
+                    'data': [
+                      3,
+                      3,
+                      3
+                    ],
+                    'error': {
+                      'mae': 5,
+                      'smape': 6
+                    }
+                  },
+                  {
+                    'data': [
+                      4,
+                      4,
+                      4
+                    ],
+                    'error': {
+                      'mae': 5,
+                      'smape': 6
+                    }
+                  },
+                  {
+                    'data': [
+                      5,
+                      5,
+                      5
+                    ],
+                    'error': {
+                      'mae': 5,
+                      'smape': 6
+                    }
+                  },
+                  {
+                    'data': [
+                      6,
+                      6,
+                      6
+                    ],
+                    'error': {
+                      'mae': 5,
+                      'smape': 6
+                    }
+                  },
+                  {
+                    'data': [
+                      7,
+                      7,
+                      7
+                    ],
+                    'error': {
+                      'mae': 5,
+                      'smape': 6
+                    }
+                  },
+                  {
+                    'data': [
+                      7,
+                      7,
+                      7
+                    ],
+                    'error': {
+                      'mae': 5,
+                      'smape': 6
+                    }
+                  },
+                  {
+                    'data': [
+                      7,
+                      7,
+                      7
+                    ],
+                    'error': {
+                      'mae': 5,
+                      'smape': 6
+                    }
+                  }
+                ],
+                [
+                  {
+                    'data': [
+                      2,
+                      2,
+                      2
+                    ],
+                    'error': {
+                      'mae': 5,
+                      'smape': 6
+                    }
+                  },
+                  {
+                    'data': [
+                      3,
+                      3,
+                      3
+                    ],
+                    'error': {
+                      'mae': 5,
+                      'smape': 6
+                    }
+                  },
+                  {
+                    'data': [
+                      4,
+                      4,
+                      4
+                    ],
+                    'error': {
+                      'mae': 5,
+                      'smape': 6
+                    }
+                  },
+                  {
+                    'data': [
+                      5,
+                      5,
+                      5
+                    ],
+                    'error': {
+                      'mae': 5,
+                      'smape': 6
+                    }
+                  },
+                  {
+                    'data': [
+                      6,
+                      6,
+                      6
+                    ],
+                    'error': {
+                      'mae': 5,
+                      'smape': 6
+                    }
+                  },
+                  {
+                    'data': [
+                      7,
+                      7,
+                      7
+                    ],
+                    'error': {
+                      'mae': 5,
+                      'smape': 6
+                    }
+                  },
+                  {
+                    'data': [
+                      7,
+                      7,
+                      7
+                    ],
+                    'error': {
+                      'mae': 5,
+                      'smape': 6
+                    }
+                  },
+                  {
+                    'data': [
+                      7,
+                      7,
+                      7
+                    ],
+                    'error': {
+                      'mae': 5,
+                      'smape': 6
+                    }
+                  }
+                ],
+                [
+                  {
+                    'data': [
+                      2,
+                      2,
+                      2
+                    ],
+                    'error': {
+                      'mae': 5,
+                      'smape': 6
+                    }
+                  },
+                  {
+                    'data': [
+                      3,
+                      3,
+                      3
+                    ],
+                    'error': {
+                      'mae': 5,
+                      'smape': 6
+                    }
+                  },
+                  {
+                    'data': [
+                      4,
+                      4,
+                      4
+                    ],
+                    'error': {
+                      'mae': 5,
+                      'smape': 6
+                    }
+                  },
+                  {
+                    'data': [
+                      5,
+                      5,
+                      5
+                    ],
+                    'error': {
+                      'mae': 5,
+                      'smape': 6
+                    }
+                  },
+                  {
+                    'data': [
+                      6,
+                      6,
+                      6
+                    ],
+                    'error': {
+                      'mae': 5,
+                      'smape': 6
+                    }
+                  },
+                  {
+                    'data': [
+                      7,
+                      7,
+                      7
+                    ],
+                    'error': {
+                      'mae': 5,
+                      'smape': 6
+                    }
+                  },
+                  {
+                    'data': [
+                      7,
+                      7,
+                      7
+                    ],
+                    'error': {
+                      'mae': 5,
+                      'smape': 6
+                    }
+                  },
+                  {
+                    'data': [
+                      7,
+                      7,
+                      7
+                    ],
+                    'error': {
+                      'mae': 5,
+                      'smape': 6
+                    }
+                  }
+                ]
+              ]
             },
             "data": {
               "dataSetName": "Name of dataset",
