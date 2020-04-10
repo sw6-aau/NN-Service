@@ -1,6 +1,7 @@
-from flask import Flask
+from flask import Flask, send_file
 from flask_restful import Resource, Api
 from flask_cors import CORS
+from storageFunctions import ValidateFileExist, ValidateFileName, WriteToPublic, GetTextFromPublic, GetFileNamesInFolder
 
 # Setup
 app = Flask(__name__)
@@ -57,7 +58,7 @@ class Readme(Resource):
     def get(self):
         return {
             "chart_type": "markdown",
-            "content": open("static/documentation.md", "r").read()
+            "content": GetTextFromPublic("", "documentation.md")
         }
 
 # The "/render" endpoint
@@ -67,7 +68,279 @@ class Render(Resource):
           'chart_type': 'time-series-data',
           'content': {
             "settings": {
-              "to_chart": "chart-js"
+              "to_chart": "generic-time-series",
+              "predictions": [
+                [
+                  {
+                    'data': [
+                      2,
+                      2,
+                      2
+                    ],
+                    'error': {
+                      'mae': 5,
+                      'smape': 6
+                    }
+                  },
+                  {
+                    'data': [
+                      3,
+                      3,
+                      3
+                    ],
+                    'error': {
+                      'mae': 5,
+                      'smape': 6
+                    }
+                  },
+                  {
+                    'data': [
+                      4,
+                      4,
+                      4
+                    ],
+                    'error': {
+                      'mae': 5,
+                      'smape': 6
+                    }
+                  },
+                  {
+                    'data': [
+                      5,
+                      5,
+                      5
+                    ],
+                    'error': {
+                      'mae': 5,
+                      'smape': 6
+                    }
+                  },
+                  {
+                    'data': [
+                      6,
+                      6,
+                      6
+                    ],
+                    'error': {
+                      'mae': 5,
+                      'smape': 6
+                    }
+                  },
+                  {
+                    'data': [
+                      7,
+                      7,
+                      7
+                    ],
+                    'error': {
+                      'mae': 5,
+                      'smape': 6
+                    }
+                  },
+                  {
+                    'data': [
+                      7,
+                      7,
+                      7
+                    ],
+                    'error': {
+                      'mae': 5,
+                      'smape': 6
+                    }
+                  },
+                  {
+                    'data': [
+                      7,
+                      7,
+                      7
+                    ],
+                    'error': {
+                      'mae': 5,
+                      'smape': 6
+                    }
+                  }
+                ],
+                [
+                  {
+                    'data': [
+                      2,
+                      2,
+                      2
+                    ],
+                    'error': {
+                      'mae': 5,
+                      'smape': 6
+                    }
+                  },
+                  {
+                    'data': [
+                      3,
+                      3,
+                      3
+                    ],
+                    'error': {
+                      'mae': 5,
+                      'smape': 6
+                    }
+                  },
+                  {
+                    'data': [
+                      4,
+                      4,
+                      4
+                    ],
+                    'error': {
+                      'mae': 5,
+                      'smape': 6
+                    }
+                  },
+                  {
+                    'data': [
+                      5,
+                      5,
+                      5
+                    ],
+                    'error': {
+                      'mae': 5,
+                      'smape': 6
+                    }
+                  },
+                  {
+                    'data': [
+                      6,
+                      6,
+                      6
+                    ],
+                    'error': {
+                      'mae': 5,
+                      'smape': 6
+                    }
+                  },
+                  {
+                    'data': [
+                      7,
+                      7,
+                      7
+                    ],
+                    'error': {
+                      'mae': 5,
+                      'smape': 6
+                    }
+                  },
+                  {
+                    'data': [
+                      7,
+                      7,
+                      7
+                    ],
+                    'error': {
+                      'mae': 5,
+                      'smape': 6
+                    }
+                  },
+                  {
+                    'data': [
+                      7,
+                      7,
+                      7
+                    ],
+                    'error': {
+                      'mae': 5,
+                      'smape': 6
+                    }
+                  }
+                ],
+                [
+                  {
+                    'data': [
+                      2,
+                      2,
+                      2
+                    ],
+                    'error': {
+                      'mae': 5,
+                      'smape': 6
+                    }
+                  },
+                  {
+                    'data': [
+                      3,
+                      3,
+                      3
+                    ],
+                    'error': {
+                      'mae': 5,
+                      'smape': 6
+                    }
+                  },
+                  {
+                    'data': [
+                      4,
+                      4,
+                      4
+                    ],
+                    'error': {
+                      'mae': 5,
+                      'smape': 6
+                    }
+                  },
+                  {
+                    'data': [
+                      5,
+                      5,
+                      5
+                    ],
+                    'error': {
+                      'mae': 5,
+                      'smape': 6
+                    }
+                  },
+                  {
+                    'data': [
+                      6,
+                      6,
+                      6
+                    ],
+                    'error': {
+                      'mae': 5,
+                      'smape': 6
+                    }
+                  },
+                  {
+                    'data': [
+                      7,
+                      7,
+                      7
+                    ],
+                    'error': {
+                      'mae': 5,
+                      'smape': 6
+                    }
+                  },
+                  {
+                    'data': [
+                      7,
+                      7,
+                      7
+                    ],
+                    'error': {
+                      'mae': 5,
+                      'smape': 6
+                    }
+                  },
+                  {
+                    'data': [
+                      7,
+                      7,
+                      7
+                    ],
+                    'error': {
+                      'mae': 5,
+                      'smape': 6
+                    }
+                  }
+                ]
+              ]
             },
             "data": {
               "dataSetName": "Name of dataset",
@@ -193,6 +466,31 @@ class Data(Resource):
     def post(self):
         return "Hello from data"
 
+# The "/storage/add" endpoint
+class StorageAdd(Resource):
+    def post(self, fileName, fileData):
+        if not ValidateFileName(fileName):
+            return "Invalid request!", 404
+        else:
+            WriteToPublic("storage", fileData, fileName)
+            return "File added!"
+
+# The "/storage/get" endpoint
+class StorageGet(Resource):
+    def get(self, fileName):
+        if not ValidateFileName(fileName) or not ValidateFileExist("storage", fileName):
+           return "Invalid request!", 404
+        else:
+            try:
+                return send_file("public/storage/" + fileName, attachment_filename=fileName)
+            except Exception as e:
+                return str(e)
+
+# The "/storage/get-all-names" endpoint
+class StorageGetAllNames(Resource):
+    def get(self):
+        return GetFileNamesInFolder("storage")
+
 # The "/combined" endpoint
 class Combined(Resource):
     def post(self):
@@ -205,6 +503,9 @@ api.add_resource(Fields, "/fields")
 api.add_resource(Readme, "/readme")
 api.add_resource(Render, "/render")
 api.add_resource(Data, "/data")
+api.add_resource(StorageAdd, "/storage/add/name=<string:fileName>&data=<string:fileData>")
+api.add_resource(StorageGet, "/storage/get/name=<string:fileName>")
+api.add_resource(StorageGetAllNames, "/storage/get-all-names")
 api.add_resource(Combined, "/combined")
 
 # Start connection
