@@ -1,7 +1,7 @@
-from flask import Flask
+from flask import Flask, send_file
 from flask_restful import Resource, Api
 from flask_cors import CORS
-from storageFunctions import WriteToPublic, GetFromPublic, GetFilesInFolder
+from storageFunctions import ValidateFileExist, ValidateFileName, WriteToPublic, GetFromPublic, GetFileNamesInFolder
 
 # Setup
 app = Flask(__name__)
@@ -466,15 +466,30 @@ class Data(Resource):
     def post(self):
         return "Hello from data"
 
-# The "/storage" endpoint
-class Storage(Resource):
-    def post(self):
-        WriteToPublic("storage","Hello mom", "something.txt")
-        return "Hello from storage!"
+# The "/storage/add" endpoint
+class StorageAdd(Resource):
+    def post(self, fileName, fileData):
+        if not ValidateFileName(fileName):
+            return "Invalid request!", 404
+        else:
+            WriteToPublic("storage", fileData, fileName)
+            return "File added!"
 
+# The "/storage/get" endpoint
+class StorageGet(Resource):
+    def get(self, fileName):
+        if not ValidateFileName(fileName) or not ValidateFileExist("storage", fileName):
+           return "Invalid request!", 404
+        else:
+            try:
+                return send_file("public/storage/" + fileName, attachment_filename=fileName)
+            except Exception as e:
+                return str(e)
+
+# The "/storage/get-all-names" endpoint
+class StorageGetAllNames(Resource):
     def get(self):
-        returnFile = GetFromPublic("storage", "something.txt")
-        return GetFilesInFolder("storage")
+        return GetFileNamesInFolder("storage")
 
 # The "/combined" endpoint
 class Combined(Resource):
@@ -488,7 +503,9 @@ api.add_resource(Fields, "/fields")
 api.add_resource(Readme, "/readme")
 api.add_resource(Render, "/render")
 api.add_resource(Data, "/data")
-api.add_resource(Storage, "/storage")
+api.add_resource(StorageAdd, "/storage/add/name=<string:fileName>&data=<string:fileData>")
+api.add_resource(StorageGet, "/storage/get/name=<string:fileName>")
+api.add_resource(StorageGetAllNames, "/storage/get-all-names")
 api.add_resource(Combined, "/combined")
 
 # Start connection
