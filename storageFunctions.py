@@ -1,12 +1,19 @@
 import re
 import glob
 import base64
+import json
 
-# Ensure not able to access folders below static/ and valid chars
+# Ensure not able to access folders below public/ and valid chars
 def ValidateRelativePath(relativePath):
+    # No need to check if nothing
+    if relativePath == "":
+        return True
+    
+    # Do regex to figure check
     backPath = re.search("\.\.", relativePath)
     notAllowedChars = re.search("[^\w\.\/-]", relativePath)
 
+    # Decide what to do
     if backPath == None and notAllowedChars == None:
         return True
     else:
@@ -21,7 +28,7 @@ def ValidateFileName(filename):
 def ValidateFileExist(relativePath, filename):
     # Validate input
     if not ValidateRelativePath(relativePath) or not ValidateFileName(filename):
-        return
+        return False
 
     # Should relative path be used?
     if relativePath != "":
@@ -32,13 +39,13 @@ def ValidateFileExist(relativePath, filename):
                 return False
     else:
         for fileInPath in glob.glob("public/" + filename):
-            if fileInPath[0] == "public/" + filename:
+            if fileInPath == "public/" + filename:
                 return True
             else:
                 return False
 
 
-# Write a file to the static folder
+# Write a file to the public folder
 # Note: Assumes input is base64 encoded
 def WriteToPublic(relativePath, data, filename):
     # Validate input
@@ -57,8 +64,8 @@ def WriteToPublic(relativePath, data, filename):
     out.write(decodedStr)
     out.close
 
-# Get a file form the static folder
-def GetFromPublic(relativePath, filename):
+# Get text from a file in the public folder
+def GetTextFromPublic(relativePath, filename):
     # Validate input
     if not ValidateRelativePath(relativePath) or not ValidateFileName(filename) or not ValidateFileExist(relativePath, filename):
         return "Invalid request!"

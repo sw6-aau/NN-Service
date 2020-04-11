@@ -1,7 +1,7 @@
 from flask import Flask, send_file
 from flask_restful import Resource, Api
 from flask_cors import CORS
-from storageFunctions import ValidateFileExist, ValidateFileName, WriteToPublic, GetFromPublic, GetFileNamesInFolder
+from storageFunctions import ValidateFileExist, ValidateFileName, WriteToPublic, GetTextFromPublic, GetFileNamesInFolder
 
 # Setup
 app = Flask(__name__)
@@ -58,7 +58,7 @@ class Readme(Resource):
     def get(self):
         return {
             "chart_type": "markdown",
-            "content": GetFromPublic("", "documentation.md")
+            "content": GetTextFromPublic("", "documentation.md")
         }
 
 # The "/render" endpoint
