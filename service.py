@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_restful import Resource, Api
 from flask_cors import CORS
+from storageFunctions import WriteToPublic, GetFromPublic, GetFilesInFolder
 
 # Setup
 app = Flask(__name__)
@@ -57,7 +58,7 @@ class Readme(Resource):
     def get(self):
         return {
             "chart_type": "markdown",
-            "content": open("static/documentation.md", "r").read()
+            "content": GetFromPublic("", "documentation.md")
         }
 
 # The "/render" endpoint
@@ -465,6 +466,16 @@ class Data(Resource):
     def post(self):
         return "Hello from data"
 
+# The "/storage" endpoint
+class Storage(Resource):
+    def post(self):
+        WriteToPublic("storage","Hello mom", "something.txt")
+        return "Hello from storage!"
+
+    def get(self):
+        returnFile = GetFromPublic("storage", "something.txt")
+        return GetFilesInFolder("storage")
+
 # The "/combined" endpoint
 class Combined(Resource):
     def post(self):
@@ -477,6 +488,7 @@ api.add_resource(Fields, "/fields")
 api.add_resource(Readme, "/readme")
 api.add_resource(Render, "/render")
 api.add_resource(Data, "/data")
+api.add_resource(Storage, "/storage")
 api.add_resource(Combined, "/combined")
 
 # Start connection
