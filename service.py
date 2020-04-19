@@ -37,20 +37,112 @@ class Info(Resource):
 class Fields(Resource):
     def get(self):
         return {
-            "user_fields": [{
-                "name": "input-graphs",
-                "label": "Graphs",
-                "default": "",
-                "placeholder": "As JSON stiring",
-                "type": "input"
-            }],
-            "developer_fields": [{
-                "name": "input-graphs",
-                "label": "Graphs",
-                "default": "",
-                "placeholder": "As JSON stiring",
-                "type": "input"
-            }]
+            "user_fields": [
+                {
+                    "name": "dataset",
+                    "label": "Dataset",
+                    "placeholder": "See documentation for format",
+                    "type": "file"
+                },
+                {
+                    "name": "preset",
+                    "label": "Param preset",
+                    "default": "p1",
+                    "type": "select",
+                    "options": [ 
+                        {
+                            "name": "Preset1",
+                            "value": "p1"
+                        },
+                        {
+                            "name": "Preset2",
+                            "value": "p2"
+                        },
+                        {
+                            "name": "Manual-mode",
+                            "value": "m"
+                        }  
+                    ]
+                },
+                {
+                    "name": "hidCNN",
+                    "label": "CNN hidden units",
+                    "placeholder": "(Only used in manual-mode)",
+                    "type": "input-number"
+                },
+                {
+                    "name": "hidRNN",
+                    "label": "RNN hidden units",
+                    "placeholder": "(Only used in manual-mode)",
+                    "type": "input-number"
+                },
+                {
+                    "name": "window",
+                    "label": "Window size",
+                    "placeholder": "(Only used in manual-mode)",
+                    "type": "input-number"
+                },
+                {
+                    "name": "CNN_kernel",
+                    "label": "CNN Kernel size",
+                    "placeholder": "(Only used in manual-mode)",
+                    "type": "input-number"
+                },
+                {
+                    "name": "highway_window",
+                    "label": "Window size of highway component",
+                    "placeholder": "(Only used in manual-mode)",
+                    "type": "input-number"
+                },
+                {
+                    "name": "clip",
+                    "label": "Gradient clipping",
+                    "placeholder": "(Only used in manual-mode)",
+                    "type": "input-number"
+                },
+                {
+                    "name": "epochs",
+                    "label": "Upper epoch limit",
+                    "placeholder": "(Only used in manual-mode)",
+                    "type": "input-number"
+                },
+                {
+                    "name": "batch_size",
+                    "label": "Batch size",
+                    "placeholder": "(Only used in manual-mode)",
+                    "type": "input-number"
+                },
+                {
+                    "name": "dropout",
+                    "label": "Dropout applied to layers",
+                    "placeholder": "(Only used in manual-mode)",
+                    "type": "input-number"
+                },
+                {
+                    "name": "seed",
+                    "label": "Random seed",
+                    "placeholder": "(Only used in manual-mode)",
+                    "type": "input-number"
+                }
+            ],
+            "developer_fields": [
+                {
+                    "name": "preset",
+                    "label": "Param preset",
+                    "default": "p1",
+                    "type": "select",
+                    "options": [ 
+                        {
+                            "name": "Preset1",
+                            "value": "p1"
+                        },
+                        {
+                            "name": "Preset2",
+                            "value": "p2"
+                        }
+                    ]
+                }
+            ]
         }
 
 # The "/readme" endpoint

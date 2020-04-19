@@ -24,7 +24,7 @@ def ValidateFileName(filename):
     return ValidateRelativePath(filename) 
     # ...as we wish to validate the same things
 
-# Validate proper filen exists
+# Validate file exists
 def ValidateFileExist(relativePath, filename):
     # Validate input
     if not ValidateRelativePath(relativePath) or not ValidateFileName(filename):
