@@ -23,5 +23,5 @@ Activation function output: Which activation function should be used on the outp
 
 Activation function autoencoder (argument ikke lavet endnu): Which activation function should be used on the autoencoder convolution and deconvolution layer
 
-Highway window: ? for now
+Highway hidden units: ? for now
 
