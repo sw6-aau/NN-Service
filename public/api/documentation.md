@@ -19,5 +19,9 @@ Epochs: How many epochs the model should train in.
 
 Autoencoder CNN hidden units: How many hidden units will be in the autoencoder convultional layer.
 
+Activation function output: Which activation function should be used on the output
+
+Activation function autoencoder (argument ikke lavet endnu): Which activation function should be used on the autoencoder convolution and deconvolution layer
+
 Highway window: ? for now
 
