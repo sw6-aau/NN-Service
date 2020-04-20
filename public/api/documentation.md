@@ -17,7 +17,7 @@ RNN-skip hidden units: How many hidden units will be in the hidden state in the 
 
 Epochs: How many epochs the model should train in.
 
-Autoencoder CNN hidden units: How many hidden units will be in the autoencoder convultional and deconvolutional layers.
+Autoencoder CNN hidden units: How many hidden units will be in the autoencoder convultional layer.
 
 Highway window: ? for now
 
