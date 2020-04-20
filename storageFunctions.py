@@ -72,12 +72,28 @@ def GetTextFromPublic(relativePath, filename):
 
     # Should relative path be used?
     if relativePath != "":
-        reader = open("public/"+relativePath+"/"+filename, "r")
+        readFile = open("public/"+relativePath+"/"+filename, "r")
     else:
-        reader = open("public/"+filename, "r")
+        readFile = open("public/"+filename, "r")
 
     # Get and return data
-    data = reader.read()
+    data = readFile.read()
+    return data
+
+# Get text from a file in the public folder
+def GetJsonFromPublic(relativePath, filename):
+    # Validate input
+    if not ValidateRelativePath(relativePath) or not ValidateFileName(filename) or not ValidateFileExist(relativePath, filename):
+        return "Invalid request!"
+
+    # Should relative path be used?
+    if relativePath != "":
+        readFile = open("public/"+relativePath+"/"+filename, "r")
+    else:
+        readFile = open("public/"+filename, "r")
+
+    # Get and return data
+    data = json.load(readFile)
     return data
 
 # Get array of all files in folder

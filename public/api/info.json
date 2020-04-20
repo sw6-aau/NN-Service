@@ -1,0 +1,20 @@
+{
+    "id": "NN-Service",
+    "name": "NN time-series predictions",
+    "version": "2020v1",
+    "category": 2,
+    "input": [
+        {
+            "name": "data-input",
+            "label": "Input data",
+            "type": "time-series"
+        }
+    ],
+    "output": [
+        {
+            "name": "data-output",
+            "label": "Output data",
+            "type": "time-series"
+        }
+    ]
+}

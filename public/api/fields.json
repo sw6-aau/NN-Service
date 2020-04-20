@@ -1,0 +1,114 @@
+{
+    "user_fields": [
+        {
+            "name": "dataset",
+            "label": "Dataset",
+            "placeholder": "See documentation for format",
+            "type": "file"
+        },
+        {
+            "name": "hori",
+            "label": "Horizon",
+            "default": 12,
+            "type": "input-number"
+        },
+        {
+            "name": "drout",
+            "label": "Dropout",
+            "default": 0.2,
+            "type": "input-number"
+        },
+        {
+            "name": "skilentim",
+            "label": "Skip: Time-steps",
+            "default": 24,
+            "type": "input-number"
+        },
+        {
+            "name": "preset",
+            "label": "Param preset",
+            "default": "p1",
+            "type": "select",
+            "options": [
+                {
+                    "name": "Preset1",
+                    "value": "p1"
+                },
+                {
+                    "name": "Preset2",
+                    "value": "p2"
+                },
+                {
+                    "name": "Manual-mode",
+                    "value": "m"
+                }
+            ]
+        },
+        {
+            "name": "epochs",
+            "label": "Epochs",
+            "placeholder": "(Only used in manual-mode)",
+            "type": "input-number"
+        },
+        {
+            "name": "hidCNN",
+            "label": "CNN hidden units",
+            "placeholder": "(Only used in manual-mode)",
+            "type": "input-number"
+        },
+        {
+            "name": "hidRNN",
+            "label": "RNN hidden units",
+            "placeholder": "(Only used in manual-mode)",
+            "type": "input-number"
+        },
+        {
+            "name": "skilay",
+            "label": "RNN-skip hidden units",
+            "placeholder": "(Only used in manual-mode)",
+            "type": "input-number"
+        },
+        {
+            "name": "actityp",
+            "label": "Activation Type",
+            "default": "sigmoid",
+            "type": "select",
+            "options": [
+                {
+                    "name": "None",
+                    "value": "node"
+                },
+                {
+                    "name": "Sigmoid",
+                    "value": "sigmoid"
+                },
+                {
+                    "name": "Tanh",
+                    "value": "tanh"
+                },
+                {
+                    "name": "ReLU",
+                    "value": "relu"
+                }
+            ]
+        }
+    ],
+    "developer_fields": [
+        {
+            "name": "preset",
+            "label": "Param preset",
+            "default": "p1",
+            "type": "select",
+            "options": [
+                {
+                    "name": "Preset1",
+                    "value": "p1"
+                },
+                {
+                    "name": "Preset2",
+                    "value": "p2"
+                }
+            ]
+        }
+    ]
+}
