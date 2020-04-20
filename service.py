@@ -45,6 +45,24 @@ class Fields(Resource):
                     "type": "file"
                 },
                 {
+                    "name": "hori",
+                    "label": "Horizon",
+                    "default": 12,
+                    "type": "input-number"
+                },
+                {
+                    "name": "drout",
+                    "label": "Dropout",
+                    "default": 0.2,
+                    "type": "input-number"
+                },
+                {
+                    "name": "skilentim",
+                    "label": "Skip: Time-steps",
+                    "default": 24,
+                    "type": "input-number"
+                },
+                {
                     "name": "preset",
                     "label": "Param preset",
                     "default": "p1",
@@ -65,6 +83,12 @@ class Fields(Resource):
                     ]
                 },
                 {
+                    "name": "epochs",
+                    "label": "Epochs",
+                    "placeholder": "(Only used in manual-mode)",
+                    "type": "input-number"
+                },
+                {
                     "name": "hidCNN",
                     "label": "CNN hidden units",
                     "placeholder": "(Only used in manual-mode)",
@@ -77,52 +101,34 @@ class Fields(Resource):
                     "type": "input-number"
                 },
                 {
-                    "name": "window",
-                    "label": "Window size",
+                    "name": "skilay",
+                    "label": "Skip: Layers",
                     "placeholder": "(Only used in manual-mode)",
                     "type": "input-number"
                 },
                 {
-                    "name": "CNN_kernel",
-                    "label": "CNN Kernel size",
-                    "placeholder": "(Only used in manual-mode)",
-                    "type": "input-number"
-                },
-                {
-                    "name": "highway_window",
-                    "label": "Window size of highway component",
-                    "placeholder": "(Only used in manual-mode)",
-                    "type": "input-number"
-                },
-                {
-                    "name": "clip",
-                    "label": "Gradient clipping",
-                    "placeholder": "(Only used in manual-mode)",
-                    "type": "input-number"
-                },
-                {
-                    "name": "epochs",
-                    "label": "Upper epoch limit",
-                    "placeholder": "(Only used in manual-mode)",
-                    "type": "input-number"
-                },
-                {
-                    "name": "batch_size",
-                    "label": "Batch size",
-                    "placeholder": "(Only used in manual-mode)",
-                    "type": "input-number"
-                },
-                {
-                    "name": "dropout",
-                    "label": "Dropout applied to layers",
-                    "placeholder": "(Only used in manual-mode)",
-                    "type": "input-number"
-                },
-                {
-                    "name": "seed",
-                    "label": "Random seed",
-                    "placeholder": "(Only used in manual-mode)",
-                    "type": "input-number"
+                    "name": "actityp",
+                    "label": "Activation Type",
+                    "default": "sigmoid",
+                    "type": "select",
+                    "options": [ 
+                        {
+                            "name": "None",
+                            "value": "node"
+                        },
+                        {
+                            "name": "Sigmoid",
+                            "value": "sigmoid"
+                        },
+                        {
+                            "name": "Tanh",
+                            "value": "tanh"
+                        },
+                        {
+                            "name": "ReLU",
+                            "value": "relu"
+                        }
+                    ]
                 }
             ],
             "developer_fields": [
