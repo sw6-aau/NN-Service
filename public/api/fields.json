@@ -51,8 +51,8 @@
             "type": "input-number"
         },
         {
-            "name": "hidCNN",
-            "label": "CNN hidden units",
+            "name": "authidCNN",
+            "label": "Autoencoder CNN hidden units",
             "placeholder": "(Only used in manual-mode)",
             "type": "input-number"
         },
@@ -63,14 +63,50 @@
             "type": "input-number"
         },
         {
-            "name": "skilay",
+            "name": "hidRNNski",
             "label": "RNN-skip hidden units",
             "placeholder": "(Only used in manual-mode)",
             "type": "input-number"
         },
         {
-            "name": "actityp",
-            "label": "Activation Type",
+            "name": "rnnwind",
+            "label": "RNN window size",
+            "placeholder": "(Only used in manual-mode)",
+            "type": "input-number"
+        },
+        {
+            "name": "highwayWind",
+            "label": "Highway window",
+            "placeholder": "(Only used in manual-mode)",
+            "type": "input-number"
+        },
+        {
+            "name": "actitypout",
+            "label": "Activation function output",
+            "default": "sigmoid",
+            "type": "select",
+            "options": [
+                {
+                    "name": "None",
+                    "value": "node"
+                },
+                {
+                    "name": "Sigmoid",
+                    "value": "sigmoid"
+                },
+                {
+                    "name": "Tanh",
+                    "value": "tanh"
+                },
+                {
+                    "name": "ReLU",
+                    "value": "relu"
+                }
+            ]
+        },
+        {
+            "name": "actitypauto",
+            "label": "Activation function autoencoder",
             "default": "sigmoid",
             "type": "select",
             "options": [
