@@ -13,7 +13,7 @@ RNN hidden units: How many hidden units will be in the the hidden state in the r
 
 RNN-skip number of time-steps skips: How many time steps it should skip in the RNN-skip network. For a dataset where one input corresponds to a hour, 24 skip time-steps would mean that RNN-skip would train predicting time-steps where one time-step corresponds to one day.
 
-RNN-skip hidden units: How many hidden units will be in the the hidden state in the RNN-skip component.
+RNN-skip hidden units: How many hidden units will be in the hidden state in the RNN-skip component.
 
 Epochs: How many epochs the model should train in.
 
