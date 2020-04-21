@@ -1,7 +1,9 @@
+import werkzeug
 from flask import Flask, send_file
-from flask_restful import Resource, Api
+from flask_restful import Resource, Api, reqparse
 from flask_cors import CORS
 from storageFunctions import ValidateFileExist, ValidateFileName, WriteToPublic, GetTextFromPublic, GetJsonFromPublic, GetFileNamesInFolder
+from backendFunctions import SendRenderDataToBackend
 
 # Setup
 app = Flask(__name__)
@@ -34,7 +36,26 @@ class Readme(Resource):
 # The "/render" endpoint
 class Render(Resource):
     def post(self):
-        return GetJsonFromPublic("api", "render.json")
+        # Parse request and save to dictionary
+        parser = reqparse.RequestParser()
+        parser.add_argument("dataset", type=werkzeug.datastructures.FileStorage, location='files')
+        parser.add_argument("hori")
+        parser.add_argument("drout")
+        parser.add_argument("skilentim")
+        parser.add_argument("preset")
+        parser.add_argument("epochs")
+        parser.add_argument("authidCNN")
+        parser.add_argument("hidRNN")
+        parser.add_argument("hidRNNski")
+        parser.add_argument("rnnwind")
+        parser.add_argument("highwayWind")
+        parser.add_argument("actitypout")
+        parser.add_argument("actitypauto")
+        args = parser.parse_args()
+        
+        renderData = SendRenderDataToBackend(args)
+        
+        return GetJsonFromPublic("api", "render.json")      
 
 # The "/data" endpoint
 class Data(Resource):
