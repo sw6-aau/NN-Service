@@ -75,7 +75,7 @@ class StorageAdd(Resource):
 # The "/storage/get" endpoint
 class StorageGet(Resource):
     def get(self, fileName):
-        if not ValidateFileName(fileName) or not ValidateFileExist("storage", fileName):
+        if not ValidateFileName(fileName) or not ValidateFileExist("storage", fileName, "public/"):
            return "Invalid request!", 404
         else:
             try:

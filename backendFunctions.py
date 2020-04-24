@@ -13,7 +13,7 @@ def SendRenderDataToBackend(args):
         img = noGithub["errorImg"]
         return {
             "chart_type": "text",
-            "content": "<div style='color: red; text-align: center;'><h1 style='position: relative; top: 20px;'>ERROR</h1><p style='margin: 20px;'>Please make sure input is of correct format.</p><img src='" + img + "' width='500' alt='Error no image found :('></div>"
+            "content": "<div style='color: red; text-align: center;'><h1 style='position: relative; top: 20px;'>ERROR</h1><p style='margin: 20px;'>Please make sure input is of correct format.</p><img src='" + img + "' width='500' alt=''></div>"
         }
     
     # TODO: Parse args into request
@@ -25,7 +25,7 @@ def SendRenderDataToBackend(args):
 def ValidationOfRenderArgs(args):
     checks = []
     
-    checks.append(ValidateRenderString(args["option"]))
+    checks.append(ValidateStringNoSymbol(args["option"]))
     checks.append(ValidateRenderNumber(args["horizon"]))
     checks.append(ValidateRenderNumber(args["dropout"]))
     # Ensure dropout is <= 1
@@ -33,7 +33,7 @@ def ValidationOfRenderArgs(args):
             print("ERROR: Argument '" + args["dropout"] +"' failed validation, as n > 1\n")
             checks.append(False)
     checks.append(ValidateRenderNumber(args["skip_rnn"]))
-    checks.append(ValidateRenderString(args["preset"]))
+    checks.append(ValidateStringNoSymbol(args["preset"]))
 
     # Only check rest if manual-mode is chosen
     if ValidateStringNoSymbol(args["preset"]) and args["preset"] == "m":
@@ -43,8 +43,8 @@ def ValidationOfRenderArgs(args):
         checks.append(ValidateRenderNumber(args["hid_skip_rnn"]))
         checks.append(ValidateRenderNumber(args["window_rnn"]))
         checks.append(ValidateRenderNumber(args["windows_hw"]))
-        checks.append(ValidateRenderString(args["af_output"]))
-        checks.append(ValidateRenderString(args["af_ae"]))
+        checks.append(ValidateStringNoSymbol(args["af_output"]))
+        checks.append(ValidateStringNoSymbol(args["af_ae"]))
 
     # Check if any validation failed
     for check in checks:
@@ -57,14 +57,6 @@ def ValidationOfRenderArgs(args):
 def ValidateRenderNumber(arg):
     if not ValidateNumber(arg) or not ValidateNumNotNegative(arg):
         print("ERROR: Argument '" + arg +"' failed number validation\n")
-        return False
-    else:
-        return True
-
-# Validate a /render argument lives up to requirements for strings
-def ValidateRenderString(arg):
-    if not ValidateStringNoSymbol(arg):
-        print("ERROR: Argument '" + arg +"' failed string validation\n")
         return False
     else:
         return True
