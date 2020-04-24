@@ -25,21 +25,21 @@ def ValidateFileName(filename):
     # ...as we wish to validate the same things
 
 # Validate file exists
-def ValidateFileExist(relativePath, filename):
+def ValidateFileExist(relativePath, filename, localFolder):
     # Validate input
     if not ValidateRelativePath(relativePath) or not ValidateFileName(filename):
         return False
 
     # Should relative path be used?
     if relativePath != "":
-        for fileInPath in glob.glob("public/" + relativePath + "/" + filename):
-            if fileInPath == "public/" + relativePath + "/" + filename:
+        for fileInPath in glob.glob(localFolder + relativePath + "/" + filename):
+            if fileInPath == localFolder + relativePath + "/" + filename:
                 return True
             else:
                 return False
     else:
-        for fileInPath in glob.glob("public/" + filename):
-            if fileInPath == "public/" + filename:
+        for fileInPath in glob.glob(localFolder + filename):
+            if fileInPath == localFolder + filename:
                 return True
             else:
                 return False
@@ -67,7 +67,7 @@ def WriteToPublic(relativePath, data, filename):
 # Get text from a file in the public folder
 def GetTextFromPublic(relativePath, filename):
     # Validate input
-    if not ValidateRelativePath(relativePath) or not ValidateFileName(filename) or not ValidateFileExist(relativePath, filename):
+    if not ValidateRelativePath(relativePath) or not ValidateFileName(filename) or not ValidateFileExist(relativePath, filename, "public/"):
         return "Invalid request!"
 
     # Should relative path be used?
@@ -82,15 +82,23 @@ def GetTextFromPublic(relativePath, filename):
 
 # Get text from a file in the public folder
 def GetJsonFromPublic(relativePath, filename):
+    return GetJsonData(relativePath, filename, "public/")
+
+# Get text from a file in the public folder
+def GetJsonFromPrivate(relativePath, filename):
+    return GetJsonData(relativePath, filename, "private/")
+
+# Get text from a file in the public folder
+def GetJsonData(relativePath, filename, localFolder):
     # Validate input
-    if not ValidateRelativePath(relativePath) or not ValidateFileName(filename) or not ValidateFileExist(relativePath, filename):
+    if not ValidateRelativePath(relativePath) or not ValidateFileName(filename) or not ValidateFileExist(relativePath, filename, localFolder):
         return "Invalid request!"
 
     # Should relative path be used?
     if relativePath != "":
-        readFile = open("public/"+relativePath+"/"+filename, "r")
+        readFile = open(localFolder + relativePath+"/"+filename, "r")
     else:
-        readFile = open("public/"+filename, "r")
+        readFile = open(localFolder + filename, "r")
 
     # Get and return data
     data = json.load(readFile)

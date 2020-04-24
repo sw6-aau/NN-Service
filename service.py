@@ -39,23 +39,24 @@ class Render(Resource):
         # Parse request and save to dictionary
         parser = reqparse.RequestParser()
         parser.add_argument("dataset", type=werkzeug.datastructures.FileStorage, location='files')
-        parser.add_argument("hori")
-        parser.add_argument("drout")
-        parser.add_argument("skilentim")
+        parser.add_argument("option")
+        parser.add_argument("horizon")
+        parser.add_argument("dropout")
+        parser.add_argument("skip_rnn")
         parser.add_argument("preset")
-        parser.add_argument("epochs")
-        parser.add_argument("authidCNN")
-        parser.add_argument("hidRNN")
-        parser.add_argument("hidRNNski")
-        parser.add_argument("rnnwind")
-        parser.add_argument("highwayWind")
-        parser.add_argument("actitypout")
-        parser.add_argument("actitypauto")
+        parser.add_argument("epoch")
+        parser.add_argument("hid_cnn")
+        parser.add_argument("hid_rnn")
+        parser.add_argument("hid_skip_rnn")
+        parser.add_argument("window_rnn")
+        parser.add_argument("windows_hw")
+        parser.add_argument("af_output")
+        parser.add_argument("af_ae")
         args = parser.parse_args()
         
         renderData = SendRenderDataToBackend(args)
-        
-        return GetJsonFromPublic("api", "render.json")      
+
+        return renderData      
 
 # The "/data" endpoint
 class Data(Resource):
@@ -106,4 +107,4 @@ api.add_resource(Combined, "/combined")
 
 # Start connection
 if __name__ == "__main__":
-    app.run(debug=False, port="5000", host="0.0.0.0")
+    app.run(debug=True, port="5000", host="0.0.0.0")
