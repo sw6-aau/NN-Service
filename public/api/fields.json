@@ -7,20 +7,40 @@
             "type": "file"
         },
         {
-            "name": "hori",
+            "name": "option",
+            "label": "What do you wish to do?",
+            "default": "tp",
+            "type": "select",
+            "options": [
+                {
+                    "name": "Train and Predict",
+                    "value": "tp"
+                },
+                {
+                    "name": "Train",
+                    "value": "t"
+                },
+                {
+                    "name": "Predict",
+                    "value": "p"
+                }
+            ]
+        },
+        {
+            "name": "horizon",
             "label": "Horizon",
             "default": 12,
             "type": "input-number"
         },
         {
-            "name": "drout",
+            "name": "dropout",
             "label": "Dropout",
             "default": 0.2,
             "type": "input-number"
         },
         {
-            "name": "skilentim",
-            "label": "Skip: Time-steps",
+            "name": "skip_rnn",
+            "label": "RNN-skip units",
             "default": 24,
             "type": "input-number"
         },
@@ -45,38 +65,74 @@
             ]
         },
         {
-            "name": "epochs",
+            "name": "epoch",
             "label": "Epochs",
-            "placeholder": "(Only used in manual-mode)",
+            "placeholder": "(Only in manual-mode)",
             "type": "input-number"
         },
         {
-            "name": "hidCNN",
-            "label": "CNN hidden units",
-            "placeholder": "(Only used in manual-mode)",
+            "name": "hid_cnn",
+            "label": "Autoencoder CNN hidden units",
+            "placeholder": "(Only in manual-mode)",
             "type": "input-number"
         },
         {
-            "name": "hidRNN",
+            "name": "hid_rnn",
             "label": "RNN hidden units",
-            "placeholder": "(Only used in manual-mode)",
+            "placeholder": "(Only in manual-mode)",
             "type": "input-number"
         },
         {
-            "name": "skilay",
+            "name": "hid_skip_rnn",
             "label": "RNN-skip hidden units",
-            "placeholder": "(Only used in manual-mode)",
+            "placeholder": "(Only in manual-mode)",
             "type": "input-number"
         },
         {
-            "name": "actityp",
-            "label": "Activation Type",
+            "name": "window_rnn",
+            "label": "RNN window size",
+            "placeholder": "(Only in manual-mode)",
+            "type": "input-number"
+        },
+        {
+            "name": "windows_hw",
+            "label": "Highway window",
+            "placeholder": "(Only in manual-mode)",
+            "type": "input-number"
+        },
+        {
+            "name": "af_output",
+            "label": "Activation function output",
             "default": "sigmoid",
             "type": "select",
             "options": [
                 {
                     "name": "None",
-                    "value": "node"
+                    "value": "none"
+                },
+                {
+                    "name": "Sigmoid",
+                    "value": "sigmoid"
+                },
+                {
+                    "name": "Tanh",
+                    "value": "tanh"
+                },
+                {
+                    "name": "ReLU",
+                    "value": "relu"
+                }
+            ]
+        },
+        {
+            "name": "af_ae",
+            "label": "Activation function autoencoder",
+            "default": "sigmoid",
+            "type": "select",
+            "options": [
+                {
+                    "name": "None",
+                    "value": "none"
                 },
                 {
                     "name": "Sigmoid",
