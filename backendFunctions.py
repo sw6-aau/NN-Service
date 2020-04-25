@@ -1,6 +1,7 @@
 import requests
 import re
 from storageFunctions import GetJsonFromPublic, GetJsonFromPrivate
+from validationFunctions import ValidateNumber, ValidateNumNotNegative, ValidateStringNoSymbol
 
 noGithub = GetJsonFromPrivate("noGithub", "privateData.json")
 apiURL = "http://172.17.0.2:80" 
@@ -30,7 +31,7 @@ def ValidationOfRenderArgs(args):
     checks.append(ValidateRenderNumber(args["dropout"]))
     # Ensure dropout is <= 1
     if ValidateRenderNumber(args["dropout"]) and float(args["dropout"]) > 1:
-            print("ERROR: Argument '" + args["dropout"] +"' failed validation, as n > 1\n")
+            print("ERROR: Argument '" + args["dropout"] +"' failed validation, as n > 1")
             checks.append(False)
     checks.append(ValidateRenderNumber(args["skip_rnn"]))
     checks.append(ValidateStringNoSymbol(args["preset"]))
@@ -56,34 +57,8 @@ def ValidationOfRenderArgs(args):
 # Validate a /render argument lives up to requirements for numbers
 def ValidateRenderNumber(arg):
     if not ValidateNumber(arg) or not ValidateNumNotNegative(arg):
-        print("ERROR: Argument '" + arg +"' failed number validation\n")
+        print("ERROR: Argument '" + arg +"' failed number validation")
         return False
     else:
         return True
 
-# Validate if it is a number via regex
-def ValidateNumber(num):
-    test = re.search("[^0-9.-]", num)
-    if test == None:
-        return True
-    else:
-        print("ERROR: '" + num + "' is NaN")
-        return False
-
-# Validate that a number is not negative
-def ValidateNumNotNegative(num):
-    n = float(num)
-    if n < 0:
-        print("ERROR: '" + num + "' is negative")
-        return False
-    else:
-        return True
-
-# Validate that text is only letters and numbers via regex
-def ValidateStringNoSymbol(string):
-    test = re.search("[^0-9a-zA-Z ]", string)
-    if test == None:
-        return True
-    else:
-        print("ERROR: '" + string + "' is not a valid string")
-        return False

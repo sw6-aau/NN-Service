@@ -1,9 +1,10 @@
 import werkzeug
-from flask import Flask, send_file
+from flask import Flask, send_file, request
 from flask_restful import Resource, Api, reqparse
 from flask_cors import CORS
 from storageFunctions import ValidateFileExist, ValidateFileName, WriteToPublic, GetTextFromPublic, GetJsonFromPublic, GetFileNamesInFolder
 from backendFunctions import SendRenderDataToBackend
+from validationFunctions import ValidateStringNoSymbol
 
 # Setup
 app = Flask(__name__)
@@ -65,21 +66,27 @@ class Data(Resource):
 
 # The "/storage/add" endpoint
 class StorageAdd(Resource):
-    def post(self, fileName, fileData):
-        if not ValidateFileName(fileName):
+    def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument("fileName")
+        args = parser.parse_args()
+        fileData = request.files['fileData']
+        if not ValidateFileName(args["fileName"]):
             return "Invalid request!", 404
         else:
-            WriteToPublic("storage", fileData, fileName)
-            return "File added!"
+            return WriteToPublic("storage", fileData, args["fileName"])
 
 # The "/storage/get" endpoint
 class StorageGet(Resource):
-    def get(self, fileName):
-        if not ValidateFileName(fileName) or not ValidateFileExist("storage", fileName, "public/"):
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument("fileName")
+        args = parser.parse_args()
+        if not ValidateFileName(args["fileName"]) or not ValidateFileExist("storage", args["fileName"], "public/"):
            return "Invalid request!", 404
         else:
             try:
-                return send_file("public/storage/" + fileName, attachment_filename=fileName)
+                return send_file("public/storage/" + args["fileName"], attachment_filename=args["fileName"])
             except Exception as e:
                 return str(e)
 
@@ -100,8 +107,8 @@ api.add_resource(Fields, "/fields")
 api.add_resource(Readme, "/readme")
 api.add_resource(Render, "/render")
 api.add_resource(Data, "/data")
-api.add_resource(StorageAdd, "/storage/add/name=<string:fileName>&data=<string:fileData>")
-api.add_resource(StorageGet, "/storage/get/name=<string:fileName>")
+api.add_resource(StorageAdd, "/storage/add")
+api.add_resource(StorageGet, "/storage/get")
 api.add_resource(StorageGetAllNames, "/storage/get-all-names")
 api.add_resource(Combined, "/combined")
 
