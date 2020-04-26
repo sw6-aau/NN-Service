@@ -54,10 +54,12 @@ class Render(Resource):
         parser.add_argument("af_output")
         parser.add_argument("af_ae")
         args = parser.parse_args()
-        
-        renderData = SendRenderDataToBackend(args)
+        renderData = SendRenderDataToBackend(args, request.base_url)
 
-        return renderData      
+        return renderData
+
+    def get(self):
+        return "Data from GET request"      
 
 # The "/data" endpoint
 class Data(Resource):

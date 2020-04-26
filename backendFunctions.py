@@ -8,7 +8,7 @@ apiURL = "http://172.17.0.2:80"
 
 # Get data from input fields, and send them to bakcend 
 # Then handle response and return
-def SendRenderDataToBackend(args):
+def SendRenderDataToBackend(args, serviceURL):
     # Input validation, and error response
     if not ValidationOfRenderArgs(args):
         img = noGithub["errorImg"]
@@ -20,7 +20,10 @@ def SendRenderDataToBackend(args):
     # TODO: Parse args into request
     # TODO: Handle retrieved data
 
-    return GetJsonFromPublic("api", "render.json")
+    return {
+            "chart_type": "text",
+            "content": "<div style='color: blue; text-align: center;'><h1 style='position: relative; top: 20px;'>Please wait for calculations to finish</h1></div><div><object data='" + serviceURL + "'></object></div>"
+        }
 
 # Validate input fields for /render are of correct format
 def ValidationOfRenderArgs(args):
