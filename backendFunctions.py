@@ -1,6 +1,6 @@
 import requests
 import re
-from storageFunctions import GetJsonFromPublic, GetJsonFromPrivate
+from storageFunctions import UploadToGCP, DownloadFromGCP, GetJsonFromPublic, GetJsonFromPrivate
 from validationFunctions import ValidateNumber, ValidateNumNotNegative, ValidateStringNoSymbol
 
 noGithub = GetJsonFromPrivate("noGithub", "privateData.json")
@@ -61,4 +61,3 @@ def ValidateRenderNumber(arg):
         return False
     else:
         return True
-

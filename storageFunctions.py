@@ -2,53 +2,56 @@ import re
 import glob
 import json
 from validationFunctions import ValidateRelativePath, ValidateFileName, ValidateFileExist
+from google.cloud import storage
+
+gcpBucket = "AECLSTNetBucket"
 
 # Write a file to the public folder
-def WriteToPublic(relativePath, fileData, filename):
-    if not ValidateRelativePath(relativePath) or not ValidateFileName(filename):
+def WriteToPublic(relativePath, fileData, fileName):
+    if not ValidateRelativePath(relativePath) or not ValidateFileName(fileName):
         return "Did not upload file: Please ensure everything is valid"
 
     # Should relative path be used?
     if relativePath != "":
-        saveLocation = "public/"+relativePath+"/"+filename
+        saveLocation = "public/" + relativePath + "/" + fileName
     else:
-        saveLocation = "public/"+filename
+        saveLocation = "public/" + fileName
 
     fileData.save(saveLocation)
     return "File has been uploaded"
 
 # Get text from a file in the public folder
-def GetTextFromPublic(relativePath, filename):
-    if not ValidateRelativePath(relativePath) or not ValidateFileName(filename) or not ValidateFileExist(relativePath, filename, "public/"):
+def GetTextFromPublic(relativePath, fileName):
+    if not ValidateRelativePath(relativePath) or not ValidateFileName(fileName) or not ValidateFileExist(relativePath, fileName, "public/"):
         return "Invalid request!"
 
     # Should relative path be used?
     if relativePath != "":
-        readFile = open("public/"+relativePath+"/"+filename, "r")
+        readFile = open("public/" + relativePath + "/" + fileName, "r")
     else:
-        readFile = open("public/"+filename, "r")
+        readFile = open("public/" + fileName, "r")
 
     data = readFile.read()
     return data
 
 # Get JSON from a file in the public folder
-def GetJsonFromPublic(relativePath, filename):
-    return GetJsonData(relativePath, filename, "public/")
+def GetJsonFromPublic(relativePath, fileName):
+    return GetJsonData(relativePath, fileName, "public/")
 
 # Get JSON from a file in the private folder
-def GetJsonFromPrivate(relativePath, filename):
-    return GetJsonData(relativePath, filename, "private/")
+def GetJsonFromPrivate(relativePath, fileName):
+    return GetJsonData(relativePath, fileName, "private/")
 
 # Get JSON from a file
-def GetJsonData(relativePath, filename, localFolder):
-    if not ValidateRelativePath(relativePath) or not ValidateFileName(filename) or not ValidateFileExist(relativePath, filename, localFolder):
+def GetJsonData(relativePath, fileName, localFolder):
+    if not ValidateRelativePath(relativePath) or not ValidateFileName(fileName) or not ValidateFileExist(relativePath, fileName, localFolder):
         return "Invalid request!"
 
     # Should relative path be used?
     if relativePath != "":
-        readFile = open(localFolder + relativePath+"/"+filename, "r")
+        readFile = open(localFolder + relativePath + "/" + fileName, "r")
     else:
-        readFile = open(localFolder + filename, "r")
+        readFile = open(localFolder + fileName, "r")
 
     data = json.load(readFile)
     return data
@@ -61,3 +64,23 @@ def GetFileNamesInFolder(relativePath):
     # Make array with all file names at path
     fileNameArr = glob.glob("public/" + relativePath + "/*")
     return fileNameArr
+
+# Upload to Google Cloud Platform
+def UploadToGCP(fileData, fileName):
+    if not ValidateFileName(fileName):
+        return False
+    storage_client = storage.Client()
+    bucket = storage_client.bucket(gcpBucket)
+    blob = bucket.blob(re.sub("[^0-9a-zA-Z]", "", fileName))
+    blob.upload_from_filename(fileData)
+    return True
+
+# Download from Google Cloud Platform
+def DownloadFromGCP(fileData, fileName):
+    if not ValidateFileName(fileName):
+        return False
+    storage_client = storage.Client()
+    bucket = storage_client.bucket(gcpBucket)
+    blob = bucket.blob(re.sub("[^0-9a-zA-Z]", "", fileName))
+    dataString = blob.download_as_string(fileData)
+    return dataString
