@@ -5,7 +5,6 @@ from validationFunctions import ValidateRelativePath, ValidateFileName, Validate
 
 # Write a file to the public folder
 def WriteToPublic(relativePath, fileData, filename):
-    # Validate input
     if not ValidateRelativePath(relativePath) or not ValidateFileName(filename):
         return "Did not upload file: Please ensure everything is valid"
 
@@ -15,13 +14,11 @@ def WriteToPublic(relativePath, fileData, filename):
     else:
         saveLocation = "public/"+filename
 
-    # Write data
     fileData.save(saveLocation)
     return "File has been uploaded"
 
 # Get text from a file in the public folder
 def GetTextFromPublic(relativePath, filename):
-    # Validate input
     if not ValidateRelativePath(relativePath) or not ValidateFileName(filename) or not ValidateFileExist(relativePath, filename, "public/"):
         return "Invalid request!"
 
@@ -31,21 +28,19 @@ def GetTextFromPublic(relativePath, filename):
     else:
         readFile = open("public/"+filename, "r")
 
-    # Get and return data
     data = readFile.read()
     return data
 
-# Get text from a file in the public folder
+# Get JSON from a file in the public folder
 def GetJsonFromPublic(relativePath, filename):
     return GetJsonData(relativePath, filename, "public/")
 
-# Get text from a file in the public folder
+# Get JSON from a file in the private folder
 def GetJsonFromPrivate(relativePath, filename):
     return GetJsonData(relativePath, filename, "private/")
 
-# Get text from a file in the public folder
+# Get JSON from a file
 def GetJsonData(relativePath, filename, localFolder):
-    # Validate input
     if not ValidateRelativePath(relativePath) or not ValidateFileName(filename) or not ValidateFileExist(relativePath, filename, localFolder):
         return "Invalid request!"
 
@@ -55,13 +50,11 @@ def GetJsonData(relativePath, filename, localFolder):
     else:
         readFile = open(localFolder + filename, "r")
 
-    # Get and return data
     data = json.load(readFile)
     return data
 
 # Get array of all files in folder
 def GetFileNamesInFolder(relativePath):
-    # Validate input
     if not ValidateRelativePath(relativePath):
         return "Invalid request!"
 

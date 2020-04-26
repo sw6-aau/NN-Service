@@ -22,7 +22,7 @@ def SendRenderDataToBackend(args):
 
     return GetJsonFromPublic("api", "render.json")
 
-# Validate input fields are of correct format
+# Validate input fields for /render are of correct format
 def ValidationOfRenderArgs(args):
     checks = []
     
@@ -54,7 +54,7 @@ def ValidationOfRenderArgs(args):
 
     return True
 
-# Validate a /render argument lives up to requirements for numbers
+# Validate a /render number-argument lives up to requirements for numbers
 def ValidateRenderNumber(arg):
     if not ValidateNumber(arg) or not ValidateNumNotNegative(arg):
         print("ERROR: Argument '" + arg +"' failed number validation")

@@ -71,6 +71,7 @@ class StorageAdd(Resource):
         parser.add_argument("fileName")
         args = parser.parse_args()
         fileData = request.files['fileData']
+
         if not ValidateFileName(args["fileName"]):
             return "Invalid request!", 404
         else:
@@ -82,6 +83,7 @@ class StorageGet(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument("fileName")
         args = parser.parse_args()
+        
         if not ValidateFileName(args["fileName"]) or not ValidateFileExist("storage", args["fileName"], "public/"):
            return "Invalid request!", 404
         else:
