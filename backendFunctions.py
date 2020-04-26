@@ -20,9 +20,10 @@ def SendRenderDataToBackend(args, serviceURL):
     # TODO: Parse args into request
     # TODO: Handle retrieved data
 
+    img = noGithub["waitingImg"]
     return {
             "chart_type": "text",
-            "content": "<div style='color: blue; text-align: center;'><h1 style='position: relative; top: 20px;'>Please wait for calculations to finish</h1></div><div><object data='" + serviceURL + "'></object></div>"
+            "content": "<div style='color: #1f1f26; text-align: center;'><h1 style='position: relative; top: 20px;'>Please wait for calculations to finish</h1><p style='margin: 20px;'>This page will update when calculations are done.</p><img src='" + img + "' width='500' alt=''></div><div><embed src='" + serviceURL + "'></div><script></script>"
         }
 
 # Validate input fields for /render are of correct format

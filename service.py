@@ -1,5 +1,6 @@
 import werkzeug
-from flask import Flask, send_file, request
+import time
+from flask import Flask, send_file, request, Response
 from flask_restful import Resource, Api, reqparse
 from flask_cors import CORS
 from storageFunctions import ValidateFileExist, ValidateFileName, WriteToPublic, GetTextFromPublic, GetJsonFromPublic, GetFileNamesInFolder
@@ -59,7 +60,8 @@ class Render(Resource):
         return renderData
 
     def get(self):
-        return "Data from GET request"      
+        time.sleep(2) # Just for demo purposes right now... will be changed
+        return Response("<h3 style='color: red; text-align: center;'>Data from GET request</h3>", mimetype="text/html")     
 
 # The "/data" endpoint
 class Data(Resource):
