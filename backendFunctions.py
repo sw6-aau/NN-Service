@@ -1,14 +1,15 @@
 import requests
 import re
-from storageFunctions import UploadToGCP, DownloadFromGCP, GetJsonFromPublic, GetJsonFromPrivate
+import uuid
+from storageFunctions import MockUploadToGCP, MockDownloadFromGCP, GetJsonFromPublic, GetJsonFromPrivate
 from validationFunctions import ValidateNumber, ValidateNumNotNegative, ValidateStringNoSymbol
 
 noGithub = GetJsonFromPrivate("noGithub", "privateData.json")
 apiURL = "http://172.17.0.2:80" 
 
-# Get data from input fields, and send them to bakcend 
-# Then handle response and return
-def SendRenderDataToBackend(args, serviceURL):
+# Handle the intial request to /render
+# This sends HTML back to give feedback and initiate long polling GET request
+def HandleRenderPost(args, serviceURL):
     # Input validation, and error response
     if not ValidationOfRenderArgs(args):
         img = noGithub["errorImg"]
@@ -17,14 +18,44 @@ def SendRenderDataToBackend(args, serviceURL):
             "content": "<div style='color: red; text-align: center;'><h1 style='position: relative; top: 20px;'>ERROR</h1><p style='margin: 20px;'>Please make sure input is of correct format.</p><img src='" + img + "' width='500' alt=''></div>"
         }
     
-    # TODO: Parse args into request
-    # TODO: Handle retrieved data
+    # Upload file, and replace dataset with id in args
+    uploadID = MockUploadToGCP(uuid.uuid4()) 
+    del args["dataset"]
+    args["dataset_id"] = uploadID
+    params = ConvertArgsToParams(args)
 
+    # Return initial HTML
     img = noGithub["waitingImg"]
     return {
             "chart_type": "text",
-            "content": "<div style='color: #1f1f26; text-align: center;'><h1 style='position: relative; top: 20px;'>Please wait for calculations to finish</h1><p style='margin: 20px;'>This page will update when calculations are done.</p><img src='" + img + "' width='500' alt=''></div><div><embed src='" + serviceURL + "'></div><script></script>"
+            "content": "<div style='color: #1f1f26; text-align: center;'><h1 style='position: relative; top: 20px;'>Please wait for calculations to finish</h1><p style='margin: 20px;'>This page will update when calculations are done.</p><img src='" + img + "' width='500' alt=''></div><div style='width: 100%'><embed style='width: 100%' src='" + serviceURL + params + "'></div><script></script>"
         }
+
+# Handle the second request to /render
+# Gets data from backend when done with calculations
+# Note this is intended to use long polling (wait a long time to resond)
+def HandleRenderGet(args):
+    # TODO: Spawn this in a seperate thread
+    # TODO: Secure against race conditions
+    # TODO: Validate args again (as they could have been changed by a malicious user)
+    # TODO: /train and get build ID
+    # TODO: /predict and get build ID
+    # TODO: Download trained data file from GCP
+    # TODO: Convert into chart data and aSTEP-RFC0016 format
+    # TODO: Return html and file to frontend
+    return "<div><h3 style='color: red; text-align: center;'>Data from GET request</h3><p></p></div>"
+
+# Takes an array of args, and returns a HTML param string
+def ConvertArgsToParams(args):
+    first = True
+    paramsString = "?"
+    for arg in args:
+        if not first:
+            paramsString += "&"
+        else:
+            first = False
+        paramsString += arg + "=" + args[arg]
+    return paramsString
 
 # Validate input fields for /render are of correct format
 def ValidationOfRenderArgs(args):

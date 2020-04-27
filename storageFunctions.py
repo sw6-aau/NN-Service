@@ -84,3 +84,11 @@ def DownloadFromGCP(fileData, fileName):
     blob = bucket.blob(re.sub("[^0-9a-zA-Z]", "", fileName))
     dataString = blob.download_as_string(fileData)
     return dataString
+
+# Used for testing purposes
+def MockUploadToGCP(fileName):
+    return "mockBuildID_" + str(fileName)
+
+# Used for testing purposes
+def MockDownloadFromGCP():
+    return GetTextFromPublic("storage", "mock2.csv")
