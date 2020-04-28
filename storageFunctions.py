@@ -1,6 +1,7 @@
 import re
 import glob
 import json
+import shutil
 import requests
 from validationFunctions import ValidateRelativePath, ValidateFileName, ValidateFileExist
 from google.cloud import storage
@@ -91,5 +92,5 @@ def MockUploadToGCP(fileData):
     return re.sub('[^0-9a-zA-Z_\- ]', '', uploadID.text)
 
 # Used for testing purposes
-def MockDownloadFromGCP():
+def MockDownloadFromGCP(fileID):
     return GetTextFromPublic("storage", "mock2.csv")

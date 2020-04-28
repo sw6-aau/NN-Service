@@ -34,7 +34,7 @@
             "name": "build_id",
             "label": "Most Recent Build ID",
             "placeholder": "(Please see documentation)",
-            "type": "input-number"
+            "type": "input"
         },
         {
             "name": "horizon",

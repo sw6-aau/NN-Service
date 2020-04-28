@@ -25,7 +25,7 @@ def HandleRenderPost(args, serviceURL):
     img = noGithub["waitingImg"]
     return {
             "chart_type": "text",
-            "content": "<div style='color: #1f1f26; text-align: center;'><h1 style='position: relative; top: 20px;'>Please wait for calculations to finish</h1><p style='margin: 20px;'>This page will update when calculations are done.</p><img src='" + img + "' width='500' alt=''></div><div style='width: 100%'><embed style='width: 100%' src='" + serviceURL + params + "'></div><script></script>"
+            "content": "<div style='color: white; text-align: center; background-color: #303030; padding: 2px'><h2 style='margin-top: 1rem'>Please wait for calculations to finish.</h2><p><i>This page will update when calculations are done. It might take some time.</i></p><img style='text-align: center;' src='" + img + "' width='300' alt=''></div></div><div style='width: 100%'><embed style='width: 100%' src='" + serviceURL + params + "'></div>"
         }
 
 # Handle the second request to /render
@@ -45,6 +45,9 @@ def HandleRenderGet(args):
         trainID = re.sub("[^0-9a-zA-Z_\- ]", "", trainReq.text)
         if ValidateStringNoSymbol(trainID):
             args["train_id"] = trainID
+            # If only train, then return ID
+            if args["option"] == "t":
+                return "<h3>Train ID: " + trainID + "</h3>"
         else:
             return errorHTML
 
@@ -57,10 +60,16 @@ def HandleRenderGet(args):
         else:
             return errorHTML
 
-    # TODO: Download trained data file from GCP
+    # Download datafile from GCP
+    if args["option"] == "v":
+        data = MockDownloadFromGCP(args["build_id"])
+    else:
+        data = MockDownloadFromGCP(args["predict_id"])
+
+    print(data)
     # TODO: Convert into chart data and aSTEP-RFC0016 format
     # TODO: Return html and file to frontend
-    return "<div><h3 style='color: red; text-align: center;'>Data from GET request</h3><p></p></div>"
+    return "<div><h3 style='color: green; text-align: center;'>Data from GET request</h3><p></p></div>"
 
 # Takes an array of args, and returns a HTML param string
 def ConvertArgsToParams(args):
@@ -79,6 +88,7 @@ def ValidationOfRenderArgs(args):
     checks = []
     
     checks.append(ValidateStringNoSymbol(args["option"]))
+    checks.append(ValidateStringNoSymbol(args["build_id"]))
     checks.append(ValidateRenderNumber(args["horizon"]))
     checks.append(ValidateRenderNumber(args["dropout"]))
     # Ensure dropout is <= 1
