@@ -21,7 +21,7 @@ def ValidateNumNotNegative(num):
 
 # Validate that text is only letters and numbers via regex
 def ValidateStringNoSymbol(string):
-    test = re.search("[^0-9a-zA-Z ]", string)
+    test = re.search("[^0-9a-zA-Z_\- ]", string)
     if test == None:
         return True
     else:

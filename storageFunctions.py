@@ -1,10 +1,9 @@
 import re
 import glob
 import json
+import requests
 from validationFunctions import ValidateRelativePath, ValidateFileName, ValidateFileExist
 from google.cloud import storage
-
-gcpBucket = "AECLSTNetBucket"
 
 # Write a file to the public folder
 def WriteToPublic(relativePath, fileData, fileName):
@@ -70,7 +69,7 @@ def UploadToGCP(fileData, fileName):
     if not ValidateFileName(fileName):
         return False
     storage_client = storage.Client()
-    bucket = storage_client.bucket(gcpBucket)
+    bucket = storage_client.bucket("")
     blob = bucket.blob(re.sub("[^0-9a-zA-Z]", "", fileName))
     blob.upload_from_filename(fileData)
     return True
@@ -80,14 +79,16 @@ def DownloadFromGCP(fileData, fileName):
     if not ValidateFileName(fileName):
         return False
     storage_client = storage.Client()
-    bucket = storage_client.bucket(gcpBucket)
+    bucket = storage_client.bucket("")
     blob = bucket.blob(re.sub("[^0-9a-zA-Z]", "", fileName))
     dataString = blob.download_as_string(fileData)
     return dataString
 
 # Used for testing purposes
-def MockUploadToGCP(fileName):
-    return "mockBuildID_" + str(fileName)
+def MockUploadToGCP(fileData):
+    noGithub = GetJsonFromPrivate("noGithub", "privateData.json")
+    uploadID = requests.post(noGithub["uploadURL"])
+    return re.sub('[^0-9a-zA-Z_\- ]', '', uploadID.text)
 
 # Used for testing purposes
 def MockDownloadFromGCP():

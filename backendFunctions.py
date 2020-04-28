@@ -6,20 +6,17 @@ from validationFunctions import ValidateNumber, ValidateNumNotNegative, Validate
 
 noGithub = GetJsonFromPrivate("noGithub", "privateData.json")
 apiURL = "http://172.17.0.2:80" 
+errorHTML = "<div style='color: red; text-align: center;'><h1 style='position: relative; top: 20px;'>ERROR</h1><p style='margin: 20px;'>Something went wrong with the request, please try again.</p><img src='" + noGithub["errorImg"] + "' width='500' alt=''></div>"
 
 # Handle the intial request to /render
 # This sends HTML back to give feedback and initiate long polling GET request
 def HandleRenderPost(args, serviceURL):
     # Input validation, and error response
     if not ValidationOfRenderArgs(args):
-        img = noGithub["errorImg"]
-        return {
-            "chart_type": "text",
-            "content": "<div style='color: red; text-align: center;'><h1 style='position: relative; top: 20px;'>ERROR</h1><p style='margin: 20px;'>Please make sure input is of correct format.</p><img src='" + img + "' width='500' alt=''></div>"
-        }
+        return {"chart_type": "text", "content": errorHTML}
     
     # Upload file, and replace dataset with id in args
-    uploadID = MockUploadToGCP(uuid.uuid4()) 
+    uploadID = MockUploadToGCP(args["dataset"]) 
     del args["dataset"]
     args["dataset_id"] = uploadID
     params = ConvertArgsToParams(args)
@@ -37,16 +34,29 @@ def HandleRenderPost(args, serviceURL):
 def HandleRenderGet(args):
     # TODO: Spawn this in a seperate thread
     # TODO: Secure against race conditions
-    
+
     # Input validation, and error response
     if not ValidationOfRenderArgs(args):
-        img = noGithub["errorImg"]
-        return {
-            "chart_type": "text",
-            "content": "<div style='color: red; text-align: center;'><h1 style='position: relative; top: 20px;'>ERROR</h1><p style='margin: 20px;'>Something went wrong with the input of the request.</p><img src='" + img + "' width='500' alt=''></div>"
-        }
-    # TODO: /train and get build ID
-    # TODO: /predict and get build ID
+        return errorHTML
+    
+    # Train if desired by user
+    if args["option"] == "tp" or args["option"] == "t":
+        trainReq = requests.post(url= noGithub["trainURL"], params = args)
+        trainID = re.sub("[^0-9a-zA-Z_\- ]", "", trainReq.text)
+        if ValidateStringNoSymbol(trainID):
+            args["train_id"] = trainID
+        else:
+            return errorHTML
+
+    # Predict if desired by user
+    if args["option"] == "tp" or args["option"] == "p":
+        predictReq = requests.post(url= noGithub["predictURL"], params = args)     
+        predictID = re.sub("[^0-9a-zA-Z_\- ]", '', predictReq.text)
+        if ValidateStringNoSymbol(predictID):
+            args["predict_id"] = predictID
+        else:
+            return errorHTML
+
     # TODO: Download trained data file from GCP
     # TODO: Convert into chart data and aSTEP-RFC0016 format
     # TODO: Return html and file to frontend
@@ -90,7 +100,7 @@ def ValidationOfRenderArgs(args):
         checks.append(ValidateStringNoSymbol(args["af_ae"]))
 
     # Only check these if the file exist
-    if not args["dataset_id"] == None:
+    if "dataset_id" in args:
         checks.append(ValidateStringNoSymbol(args["dataset_id"]))
 
     # Check if any validation failed

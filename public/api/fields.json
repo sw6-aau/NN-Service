@@ -23,8 +23,18 @@
                 {
                     "name": "Predict",
                     "value": "p"
+                },
+                {
+                    "name": "Only Visualize",
+                    "value": "v"
                 }
             ]
+        },
+        {
+            "name": "build_id",
+            "label": "Most Recent Build ID",
+            "placeholder": "(Please see documentation)",
+            "type": "input-number"
         },
         {
             "name": "horizon",

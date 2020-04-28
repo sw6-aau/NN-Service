@@ -79,7 +79,6 @@ class Render(Resource):
         parser.add_argument("af_output")
         parser.add_argument("af_ae")
         args = parser.parse_args()
-        time.sleep(5) # Just for demo purposes right now... will be changed
         renderHTML = HandleRenderGet(args)
         return Response(renderHTML, mimetype="text/html")     
 
