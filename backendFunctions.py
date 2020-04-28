@@ -37,7 +37,14 @@ def HandleRenderPost(args, serviceURL):
 def HandleRenderGet(args):
     # TODO: Spawn this in a seperate thread
     # TODO: Secure against race conditions
-    # TODO: Validate args again (as they could have been changed by a malicious user)
+    
+    # Input validation, and error response
+    if not ValidationOfRenderArgs(args):
+        img = noGithub["errorImg"]
+        return {
+            "chart_type": "text",
+            "content": "<div style='color: red; text-align: center;'><h1 style='position: relative; top: 20px;'>ERROR</h1><p style='margin: 20px;'>Something went wrong with the input of the request.</p><img src='" + img + "' width='500' alt=''></div>"
+        }
     # TODO: /train and get build ID
     # TODO: /predict and get build ID
     # TODO: Download trained data file from GCP
@@ -81,6 +88,10 @@ def ValidationOfRenderArgs(args):
         checks.append(ValidateRenderNumber(args["windows_hw"]))
         checks.append(ValidateStringNoSymbol(args["af_output"]))
         checks.append(ValidateStringNoSymbol(args["af_ae"]))
+
+    # Only check these if the file exist
+    if not args["dataset_id"] == None:
+        checks.append(ValidateStringNoSymbol(args["dataset_id"]))
 
     # Check if any validation failed
     for check in checks:
