@@ -1,9 +1,10 @@
 import werkzeug
-from flask import Flask, send_file, request
+import time
+from flask import Flask, send_file, request, Response
 from flask_restful import Resource, Api, reqparse
 from flask_cors import CORS
 from storageFunctions import ValidateFileExist, ValidateFileName, WriteToPublic, GetTextFromPublic, GetJsonFromPublic, GetFileNamesInFolder
-from backendFunctions import SendRenderDataToBackend
+from backendFunctions import HandleRenderPost, HandleRenderGet
 from validationFunctions import ValidateStringNoSymbol
 
 # Setup
@@ -36,11 +37,13 @@ class Readme(Resource):
 
 # The "/render" endpoint
 class Render(Resource):
+    # Note: This is the request the front-end sends
     def post(self):
         # Parse request and save to dictionary
         parser = reqparse.RequestParser()
         parser.add_argument("dataset", type=werkzeug.datastructures.FileStorage, location='files')
         parser.add_argument("option")
+        parser.add_argument("build_id")
         parser.add_argument("horizon")
         parser.add_argument("dropout")
         parser.add_argument("skip_rnn")
@@ -54,10 +57,32 @@ class Render(Resource):
         parser.add_argument("af_output")
         parser.add_argument("af_ae")
         args = parser.parse_args()
-        
-        renderData = SendRenderDataToBackend(args)
+        renderHTML = HandleRenderPost(args, request.base_url)
 
-        return renderData      
+        return renderHTML
+
+    # Note: This request is to use "long pulling"
+    def get(self):
+        # Parse request and save to dictionary
+        parser = reqparse.RequestParser()
+        parser.add_argument("dataset_id")
+        parser.add_argument("option")
+        parser.add_argument("build_id")
+        parser.add_argument("horizon")
+        parser.add_argument("dropout")
+        parser.add_argument("skip_rnn")
+        parser.add_argument("preset")
+        parser.add_argument("epoch")
+        parser.add_argument("hid_cnn")
+        parser.add_argument("hid_rnn")
+        parser.add_argument("hid_skip_rnn")
+        parser.add_argument("window_rnn")
+        parser.add_argument("windows_hw")
+        parser.add_argument("af_output")
+        parser.add_argument("af_ae")
+        args = parser.parse_args()
+        renderHTML = HandleRenderGet(args)
+        return Response(renderHTML, mimetype="text/html")     
 
 # The "/data" endpoint
 class Data(Resource):
@@ -71,6 +96,7 @@ class StorageAdd(Resource):
         parser.add_argument("fileName")
         args = parser.parse_args()
         fileData = request.files['fileData']
+
         if not ValidateFileName(args["fileName"]):
             return "Invalid request!", 404
         else:
@@ -82,6 +108,7 @@ class StorageGet(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument("fileName")
         args = parser.parse_args()
+        
         if not ValidateFileName(args["fileName"]) or not ValidateFileExist("storage", args["fileName"], "public/"):
            return "Invalid request!", 404
         else:
@@ -114,4 +141,4 @@ api.add_resource(Combined, "/combined")
 
 # Start connection
 if __name__ == "__main__":
-    app.run(debug=True, port="5000", host="0.0.0.0")
+    app.run(threaded=True, debug=True, port="5000", host="0.0.0.0")

@@ -1,6 +1,17 @@
 # Time-Series NN Forecasting: Documentation
 *Group Sw602f20 "Time-Series NN Forecasting" service.*
 
+## Option fields
+*The following fields are options for what you wish to do:*
+
+**What do you wish to do?:** Here you can chose what should happen.
+
+**Most Recent Build ID:** This is the build ID of the step right before what you chose for the option:
+- *Train and Predict:* No need to enter anything.
+- *Train:* No need to enter anything.
+- *Predict:* Please enter a valid build-ID from a "train" build.
+- *Only Visualize:* Please enter a valid build-ID from a "predict" build.
+
 ## Mandatory fields:
 *The following fields are mandatory to fill in values of:*
 

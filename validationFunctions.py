@@ -1,7 +1,7 @@
 import re
 import glob
 
-# Validate if it is a number via regex
+# Validate if it is a number (float) via regex
 def ValidateNumber(num):
     test = re.search("[^0-9.-]", num)
     if test == None:
@@ -10,7 +10,7 @@ def ValidateNumber(num):
         print("ERROR: '" + num + "' is NaN")
         return False
 
-# Validate that a number is not negative
+# Validate that a number (float) is not negative
 def ValidateNumNotNegative(num):
     n = float(num)
     if n < 0:
@@ -21,14 +21,14 @@ def ValidateNumNotNegative(num):
 
 # Validate that text is only letters and numbers via regex
 def ValidateStringNoSymbol(string):
-    test = re.search("[^0-9a-zA-Z ]", string)
+    test = re.search("[^0-9a-zA-Z_\- ]", string)
     if test == None:
         return True
     else:
         print("ERROR: '" + string + "' is not a valid string")
         return False
 
-# Ensure not able to access folders below public/ and valid chars
+# Ensure not able to access folders below intended folder and has valid chars
 def ValidateRelativePath(relativePath):
     # No need to check if nothing
     if relativePath == "":
@@ -51,7 +51,7 @@ def ValidateFileName(filename):
 
 # Validate file exists
 def ValidateFileExist(relativePath, filename, localFolder):
-    # Validate input
+    # First validate the input params
     if not ValidateRelativePath(relativePath) or not ValidateFileName(filename):
         return False
 

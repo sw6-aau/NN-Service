@@ -11,9 +11,12 @@ curl http://localhost:5000/fields
 echo -e "\n\e[38;5;4m-===TEST '/readme'===-\n\e[0m"
 curl http://localhost:5000/readme
 
-echo -e "\n\e[38;5;4m-===TEST '/render'===-\n\e[0m"
+echo -e "\n\e[38;5;4m-===TEST POST '/render'===-\n\e[0m"
 echo -e "\e[38;5;8m(Is expecting a file, via the form, so please test via aSTEP website)\e[0m\n"
 #curl -X POST http://localhost:5000/render
+
+echo -e "\n\e[38;5;4m-===TEST POST '/render'===-\n\e[0m"
+curl http://localhost:5000/render
 
 echo -e "\n\e[38;5;4m-===TEST '/data'===-\n\e[0m"
 curl -X POST http://localhost:5000/data
