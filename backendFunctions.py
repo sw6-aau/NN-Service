@@ -5,7 +5,6 @@ from storageFunctions import MockUploadToGCP, MockDownloadFromGCP, GetJsonFromPu
 from validationFunctions import ValidateNumber, ValidateNumNotNegative, ValidateStringNoSymbol
 
 noGithub = GetJsonFromPrivate("noGithub", "privateData.json")
-apiURL = "http://172.17.0.2:80" 
 errorHTML = "<div style='color: red; text-align: center;'><h1 style='position: relative; top: 20px;'>ERROR</h1><p style='margin: 20px;'>Something went wrong with the request, please try again.</p><img src='" + noGithub["errorImg"] + "' width='500' alt=''></div>"
 
 # Handle the intial request to /render
@@ -32,9 +31,6 @@ def HandleRenderPost(args, serviceURL):
 # Gets data from backend when done with calculations
 # Note this is intended to use long polling (wait a long time to resond)
 def HandleRenderGet(args):
-    # TODO: Spawn this in a seperate thread
-    # TODO: Secure against race conditions
-
     # Input validation, and error response
     if not ValidationOfRenderArgs(args):
         return errorHTML
@@ -47,7 +43,7 @@ def HandleRenderGet(args):
             args["train_id"] = trainID
             # If only train, then return ID
             if args["option"] == "t":
-                return "<h3>Train ID: " + trainID + "</h3>"
+                return "<h3 style='text-align: center;'>Train ID: " + trainID + "</h3>"
         else:
             return errorHTML
 
@@ -66,7 +62,6 @@ def HandleRenderGet(args):
     else:
         data = MockDownloadFromGCP(args["predict_id"])
 
-    print(data)
     # TODO: Convert into chart data and aSTEP-RFC0016 format
     # TODO: Return html and file to frontend
     return "<div><h3 style='color: green; text-align: center;'>Data from GET request</h3><p></p></div>"

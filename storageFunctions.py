@@ -1,7 +1,6 @@
 import re
 import glob
 import json
-import shutil
 import requests
 from validationFunctions import ValidateRelativePath, ValidateFileName, ValidateFileExist
 from google.cloud import storage
