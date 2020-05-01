@@ -92,4 +92,4 @@ def MockUploadToGCP(fileData):
 
 # Used for testing purposes
 def MockDownloadFromGCP(fileID):
-    return GetTextFromPublic("storage", "mock2.csv")
+    return open("public/storage/mock2.csv", "r")
