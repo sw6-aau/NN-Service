@@ -17,8 +17,8 @@ def HandleRenderPost(args, serviceURL):
         return {"chart_type": "text", "content": errorHTML}
     
     # Upload file, and replace dataset with id in args
-    uploadID = MockUploadToGCP(args["dataset"]) 
-    del args["dataset"]
+    uploadID = MockUploadToGCP(args["data-input"]) 
+    del args["data-input"]
     args["dataset_id"] = uploadID
     params = ConvertArgsToParams(args)
 
@@ -54,6 +54,8 @@ def HandleRenderGet(args):
 
     # Predict if desired by user
     if args["option"] == "tp" or args["option"] == "p":
+        if args["option"] == "p":
+            args["train_id"] = args["build_id"]
         predictReq = requests.post(url= noGithub["predictURL"], params = args)     
         predictID = re.sub("[^0-9a-zA-Z_\- ]", '', predictReq.text)
         if ValidateStringNoSymbol(predictID):

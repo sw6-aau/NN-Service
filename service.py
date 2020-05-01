@@ -41,7 +41,7 @@ class Render(Resource):
     def post(self):
         # Parse request and save to dictionary
         parser = reqparse.RequestParser()
-        parser.add_argument("dataset", type=werkzeug.datastructures.FileStorage, location='files')
+        parser.add_argument("data-input", type=werkzeug.datastructures.FileStorage, location='files')
         parser.add_argument("option")
         parser.add_argument("build_id")
         parser.add_argument("horizon")
