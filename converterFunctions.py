@@ -50,7 +50,7 @@ def MakeDataPointObj(x, y):
 def TimeSeriesToCsv(timeSeriesData):
     data = []
     
-    # Make array representation of all Y, values
+    # Make array representation of all Y-values
     for graph in timeSeriesData["graphs"]:
         graphData = []
         for dataPoint in graph["data"]:

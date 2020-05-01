@@ -1,12 +1,6 @@
 {
     "user_fields": [
         {
-            "name": "dataset",
-            "label": "Dataset",
-            "placeholder": "See documentation for format",
-            "type": "file"
-        },
-        {
             "name": "option",
             "label": "What do you wish to do?",
             "default": "tp",

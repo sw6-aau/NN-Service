@@ -4,7 +4,7 @@
 ## Option fields
 *The following fields are options for what you wish to do:*
 
-**Dataset:** Here you can upload the dataset in either a comma-separated .csv file or aSTEP RFC0016 file format. 
+**Input data:** Here you can upload the dataset in either a comma-separated .csv file or aSTEP RFC0016 file format. 
 
 **What do you wish to do?:** Here you can chose what should happen.
 
