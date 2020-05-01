@@ -4,6 +4,8 @@
 ## Option fields
 *The following fields are options for what you wish to do:*
 
+**Dataset:** Here you can upload the dataset in either a comma-separated .csv file or aSTEP RFC0016 file format. 
+
 **What do you wish to do?:** Here you can chose what should happen.
 
 **Most Recent Build ID:** This is the build ID of the step right before what you chose for the option:

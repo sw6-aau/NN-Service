@@ -3,6 +3,7 @@ import re
 import uuid
 from storageFunctions import MockUploadToGCP, MockDownloadFromGCP, GetJsonFromPublic, GetJsonFromPrivate
 from validationFunctions import ValidateNumber, ValidateNumNotNegative, ValidateStringNoSymbol
+from converterFunctions import CsvToTimeSeries
 
 noGithub = GetJsonFromPrivate("noGithub", "privateData.json")
 errorHTML = "<div style='color: red; text-align: center;'><h1 style='position: relative; top: 20px;'>ERROR</h1><p style='margin: 20px;'>Something went wrong with the request, please try again.</p><img src='" + noGithub["errorImg"] + "' width='500' alt=''></div>"
@@ -24,7 +25,7 @@ def HandleRenderPost(args, serviceURL):
     img = noGithub["waitingImg"]
     return {
             "chart_type": "text",
-            "content": "<div style='color: white; text-align: center; background-color: #303030; padding: 2px'><h2 style='margin-top: 1rem'>Please wait for calculations to finish.</h2><p><i>This page will update when calculations are done. It might take some time.</i></p><img style='text-align: center;' src='" + img + "' width='300' alt=''></div></div><div style='width: 100%'><embed style='width: 100%' src='" + serviceURL + params + "'></div>"
+            "content": "<div style='color: white; text-align: center; background-color: #010b13; padding: 2px'><h2 style='margin-top: 1rem'>Please wait for calculations to finish.</h2><p><i>This page will update when calculations are done. It might take some time.</i></p><img style='text-align: center; margin-bottom: 0.5rem' src='" + img + "' width='50' alt=''></div></div><div style='width: 100%'><embed style='width: 100%' src='" + serviceURL + params + "'></div>"
         }
 
 # Handle the second request to /render
@@ -62,7 +63,9 @@ def HandleRenderGet(args):
     else:
         data = MockDownloadFromGCP(args["predict_id"])
 
-    # TODO: Convert into chart data and aSTEP-RFC0016 format
+    # Convert into chart data and aSTEP-RFC0016 format
+    aSTEPData = CsvToTimeSeries(data, "Data Set")
+    
     # TODO: Return html and file to frontend
     return "<div><h3 style='color: green; text-align: center;'>Data from GET request</h3><p></p></div>"
 
