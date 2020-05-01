@@ -3,7 +3,7 @@ import re
 import uuid
 from storageFunctions import MockUploadToGCP, MockDownloadFromGCP, GetJsonFromPublic, GetJsonFromPrivate
 from validationFunctions import ValidateNumber, ValidateNumNotNegative, ValidateStringNoSymbol
-from converterFunctions import CsvToTimeSeries
+from converterFunctions import CsvToTimeSeries, TimeSeriesToChartJs
 
 noGithub = GetJsonFromPrivate("noGithub", "privateData.json")
 errorHTML = "<div style='color: red; text-align: center;'><h1 style='position: relative; top: 20px;'>ERROR</h1><p style='margin: 20px;'>Something went wrong with the request, please try again.</p><img src='" + noGithub["errorImg"] + "' width='500' alt=''></div>"
@@ -65,9 +65,9 @@ def HandleRenderGet(args):
 
     # Convert into chart data and aSTEP-RFC0016 format
     aSTEPData = CsvToTimeSeries(data, "Data Set")
+    chart = TimeSeriesToChartJs(aSTEPData, "line")
     
-    # TODO: Return html and file to frontend
-    return "<div><h3 style='color: green; text-align: center;'>Data from GET request</h3><p></p></div>"
+    return chart
 
 # Takes an array of args, and returns a HTML param string
 def ConvertArgsToParams(args):

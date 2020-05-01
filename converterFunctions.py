@@ -41,3 +41,20 @@ def MakeDataPointObj(x, y):
         "y": y
     }
     return dataObj
+
+# ===============
+
+# aSTEP-time-series format to chart.js graph
+def TimeSeriesToChartJs(timeSeriesData, chartType):
+    chartObj = {
+        "chart_type": "time-series-data",
+        "content": {
+            "settings": {
+                "to_chart": "chart-js",
+                "chartJsType": chartType
+            },
+            "data": timeSeriesData
+        }
+    }
+    return chartObj
+

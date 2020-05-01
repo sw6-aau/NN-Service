@@ -81,8 +81,7 @@ class Render(Resource):
         parser.add_argument("af_output")
         parser.add_argument("af_ae")
         args = parser.parse_args()
-        renderHTML = HandleRenderGet(args)
-        return Response(renderHTML, mimetype="text/html")     
+        return HandleRenderGet(args)    
 
 # The "/data" endpoint
 class Data(Resource):
