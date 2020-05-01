@@ -46,6 +46,36 @@ def MakeDataPointObj(x, y):
 
 # ===============
 
+# aSTEP-time-series format to CSV
+def TimeSeriesToCsv(timeSeriesData):
+    data = []
+    
+    # Make array representation of all Y, values
+    for graph in timeSeriesData["graphs"]:
+        graphData = []
+        for dataPoint in graph["data"]:
+            graphData.append(dataPoint["y"])
+        data.append(graphData)
+
+    # Write to file
+    saveFile = open("private/data/tsTo.csv", "w")
+    for index in range(0, len(data[0])):
+        row = ""
+        for arrayID in range(0, len(data)):
+            row += str(data[arrayID][index])
+            if not arrayID == len(data) - 1:
+                row += ","
+        saveFile.write(row)
+        if not index == len(data[0]) - 1:
+            saveFile.write("\n")
+    saveFile.close()
+
+    readFile = open("private/data/tsTo.csv", "r")
+    print(readFile.read())
+    return readFile
+
+# ===============
+
 # aSTEP-time-series format to chart.js graph
 def TimeSeriesToChartJs(timeSeriesData, chartType):
     chartObj = {
@@ -102,15 +132,12 @@ def MakePredictionPart(predictData, predictSteps):
 
             # How much in the future should be predicted for this index?
             if (currentIndex + predictSteps) >= graphLenght - 1:
-                print(">")
                 predictUntil = graphLenght - 1 - currentIndex
             else:
-                print("<")
                 predictUntil = predictSteps
 
             # Go through the predicted data and collect it
             for i in range(0, predictUntil):
-                print("-")
                 dataArr.append(graph["data"][currentIndex + 1 + i]["y"])
             
             # Add to the prediction array
