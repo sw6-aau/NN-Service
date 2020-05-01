@@ -1,4 +1,4 @@
 {
     "chart_type": "text",
-    "content": "<div style='color: red; text-align: center;'><h1 style='position: relative; top: 20px;'>ERROR</h1><p style='margin: 20px;'>Something went wrong with the request, please check input and try again.</p></div>"
+    "content": "<div style='color: white; text-align: center; background-color: #8e0f16; padding: 2px'><h1 style='position: relative; top: 20px;'>ERROR</h1><p style='margin: 20px;'>Something went wrong with the request, please verify your input is correct and try again.</p></div>"
 }
