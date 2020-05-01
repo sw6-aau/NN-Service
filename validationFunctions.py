@@ -3,11 +3,20 @@ import glob
 
 # Validate if it is a number (float) via regex
 def ValidateNumber(num):
-    test = re.search("[^0-9.-]", num)
+    test = re.search("[^0-9.-]", str(num))
     if test == None:
         return True
     else:
-        print("ERROR: '" + num + "' is NaN")
+        print("ERROR: '" + num + "' is NaN (float)")
+        return False
+
+# Validate if it is a number (int) via regex
+def ValidateInt(num):
+    test = re.search("[^0-9-]", str(num))
+    if test == None:
+        return True
+    else:
+        print("ERROR: '" + num + "' is NaN (int)")
         return False
 
 # Validate that a number (float) is not negative
@@ -68,3 +77,13 @@ def ValidateFileExist(relativePath, filename, localFolder):
                 return True
             else:
                 return False
+
+# Validate JSON-object is of aSTEP-time-series format
+def ValidateAstepTimeSeries(obj):
+    if not type(obj) is dict:
+        return False
+    
+    if not "dataSetName" in obj or not "graphs" in obj:
+        return False
+    else:
+        return True

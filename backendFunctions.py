@@ -3,10 +3,11 @@ import re
 import uuid
 from storageFunctions import MockUploadToGCP, MockDownloadFromGCP, GetJsonFromPublic, GetJsonFromPrivate
 from validationFunctions import ValidateNumber, ValidateNumNotNegative, ValidateStringNoSymbol
-from converterFunctions import CsvToTimeSeries, TimeSeriesToChartJs
+from converterFunctions import CsvToTimeSeries, TimeSeriesToChartJs, TimeSeriesToGenericTsGraph
 
 noGithub = GetJsonFromPrivate("noGithub", "privateData.json")
-errorHTML = "<div style='color: red; text-align: center;'><h1 style='position: relative; top: 20px;'>ERROR</h1><p style='margin: 20px;'>Something went wrong with the request, please try again.</p><img src='" + noGithub["errorImg"] + "' width='500' alt=''></div>"
+errorChart = GetJsonFromPublic("api", "errorChart.json")
+errorHTML = errorChart["content"]
 
 # Handle the intial request to /render
 # This sends HTML back to give feedback and initiate long polling GET request
@@ -34,7 +35,7 @@ def HandleRenderPost(args, serviceURL):
 def HandleRenderGet(args):
     # Input validation, and error response
     if not ValidationOfRenderArgs(args):
-        return errorHTML
+        return errorChart
     
     # Train if desired by user
     if args["option"] == "tp" or args["option"] == "t":
@@ -44,9 +45,12 @@ def HandleRenderGet(args):
             args["train_id"] = trainID
             # If only train, then return ID
             if args["option"] == "t":
-                return "<h3 style='text-align: center;'>Train ID: " + trainID + "</h3>"
+                return {
+                    "chart_type": "text",
+                    "content": "<h3 style='text-align: center;'>Train ID: " + trainID + "</h3>"
+                }
         else:
-            return errorHTML
+            return errorChart
 
     # Predict if desired by user
     if args["option"] == "tp" or args["option"] == "p":
@@ -55,7 +59,7 @@ def HandleRenderGet(args):
         if ValidateStringNoSymbol(predictID):
             args["predict_id"] = predictID
         else:
-            return errorHTML
+            return errorChart
 
     # Download datafile from GCP
     if args["option"] == "v":
@@ -65,7 +69,7 @@ def HandleRenderGet(args):
 
     # Convert into chart data and aSTEP-RFC0016 format
     aSTEPData = CsvToTimeSeries(data, "Data Set")
-    chart = TimeSeriesToChartJs(aSTEPData, "line")
+    chart = TimeSeriesToGenericTsGraph(aSTEPData, aSTEPData, 2)
     
     return chart
 

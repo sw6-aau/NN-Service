@@ -19,7 +19,7 @@
 
 **Horizon:** How many time steps ahead the net should try to predict.
 
-**Dropout:** How many percents of unit weights it should forget between each component layer. Helps prevent overfitting.
+**Dropout:** How many percents of unit weights it should forget between each component layer. Helps prevent overfitting. *Note: Must have value 0 >= x <= 1*
 
 **RNN-skip number of time-steps skips:** How many time steps it should skip in the RNN-skip network. For a dataset where one input corresponds to a hour, 24 skip time-steps would mean that RNN-skip would train predicting time-steps where one time-step corresponds to one day.
 
