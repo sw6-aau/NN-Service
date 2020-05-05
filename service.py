@@ -4,7 +4,7 @@ from flask import Flask, send_file, request, Response
 from flask_restful import Resource, Api, reqparse
 from flask_cors import CORS
 from storageFunctions import ValidateFileExist, ValidateFileName, WriteToPublic, GetTextFromPublic, GetJsonFromPublic, GetFileNamesInFolder
-from backendFunctions import HandleRenderPost, HandleRenderGet
+from backendFunctions import HandleRenderPost, HandleRenderGet, HandleData
 from validationFunctions import ValidateStringNoSymbol
 
 # Setup
@@ -31,8 +31,17 @@ class Fields(Resource):
 class Readme(Resource):
     def get(self):
         return {
-            "chart_type": "markdown",
-            "content": GetTextFromPublic("api", "documentation.md")
+            "chart_type": "composite-scroll",
+            "content": [
+            {
+                "chart_type": "text",
+                "content": "<div style='color: white; text-align: center; background-color: #cc7416; padding: 2px'><h1 style='position: relative; top: 20px;'>! IMPORTANT !</h1><p style='margin: 20px;'>Training and prediction will be done on a server, so it will take some time to get a result.</p></div>"
+            },
+            {
+                "chart_type": "markdown",
+                "content": GetTextFromPublic("api", "documentation.md")
+            }
+            ]
         }
 
 # The "/render" endpoint
@@ -81,12 +90,15 @@ class Render(Resource):
         parser.add_argument("af_output")
         parser.add_argument("af_ae")
         args = parser.parse_args()
-        return HandleRenderGet(args)    
+        return HandleRenderGet(args)
 
 # The "/data" endpoint
 class Data(Resource):
     def post(self):
-        return "Hello from data"
+        parser = reqparse.RequestParser()
+        parser.add_argument("build_id")
+        args = parser.parse_args()
+        return HandleData(args)
 
 # The "/storage/add" endpoint
 class StorageAdd(Resource):
@@ -107,7 +119,7 @@ class StorageGet(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument("fileName")
         args = parser.parse_args()
-        
+
         if not ValidateFileName(args["fileName"]) or not ValidateFileExist("storage", args["fileName"], "public/"):
            return "Invalid request!", 404
         else:

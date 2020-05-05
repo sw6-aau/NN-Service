@@ -1,8 +1,18 @@
 import re
 import glob
 
+# Validate that it is not an empty string
+def IsEmptyString(str):
+    if str == "":
+        print("ERROR: Empty string found")
+        return True
+    else:
+        return False
+
 # Validate if it is a number (float) via regex
 def ValidateNumber(num):
+    if IsEmptyString(num):
+        return False
     test = re.search("[^0-9.-]", str(num))
     if test == None:
         return True
@@ -12,6 +22,8 @@ def ValidateNumber(num):
 
 # Validate if it is a number (int) via regex
 def ValidateInt(num):
+    if IsEmptyString(num):
+        return False
     test = re.search("[^0-9-]", str(num))
     if test == None:
         return True
@@ -21,6 +33,8 @@ def ValidateInt(num):
 
 # Validate that a number (float) is not negative
 def ValidateNumNotNegative(num):
+    if IsEmptyString(num):
+        return False
     n = float(num)
     if n < 0:
         print("ERROR: '" + num + "' is negative")

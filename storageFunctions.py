@@ -92,4 +92,4 @@ def MockUploadToGCP(fileData):
 
 # Used for testing purposes
 def MockDownloadFromGCP(fileID):
-    return open("public/storage/mock2.csv", "r")
+    return open("public/storage/first_1000.csv", "r")

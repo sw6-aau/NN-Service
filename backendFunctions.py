@@ -1,33 +1,51 @@
 import requests
 import re
 import uuid
-from storageFunctions import MockUploadToGCP, MockDownloadFromGCP, GetJsonFromPublic, GetJsonFromPrivate
-from validationFunctions import ValidateNumber, ValidateNumNotNegative, ValidateStringNoSymbol
+from storageFunctions import MockUploadToGCP, MockDownloadFromGCP, GetJsonFromPublic, GetJsonFromPrivate, GetTextFromPublic
+from validationFunctions import ValidateNumber, ValidateNumNotNegative, ValidateStringNoSymbol, IsEmptyString
 from converterFunctions import CsvToTimeSeries, TimeSeriesToChartJs, TimeSeriesToGenericTsGraph
 
 noGithub = GetJsonFromPrivate("noGithub", "privateData.json")
 errorChart = GetJsonFromPublic("api", "errorChart.json")
 errorHTML = errorChart["content"]
 
+# Return error response
+def ReturnErrorResponse(reason):
+    return {
+        "chart_type": "composite-scroll",
+        "content": [
+            errorChart,
+            {
+                "chart_type": "text",
+                "content": "<div style='color: white; text-align: center; background-color: #630a0f;'><p style='margin: 0; padding: 5px;'>Reason: <i>" + str(reason) + "</i></p><div>" 
+            },
+            {
+                "chart_type": "markdown",
+                "content": GetTextFromPublic("api", "documentation.md")
+            }
+        ]
+    }
+
 # Handle the intial request to /render
 # This sends HTML back to give feedback and initiate long polling GET request
 def HandleRenderPost(args, serviceURL):
     # Input validation, and error response
     if not ValidationOfRenderArgs(args):
-        return {"chart_type": "text", "content": errorHTML}
-    
+        return ReturnErrorResponse("Failed input validation")
+
     # Upload file, and replace dataset with id in args
-    uploadID = MockUploadToGCP(args["data-input"]) 
+    uploadID = MockUploadToGCP(args["data-input"])
     del args["data-input"]
     args["dataset_id"] = uploadID
     params = ConvertArgsToParams(args)
 
     # Return initial HTML
     img = noGithub["waitingImg"]
-    return {
-            "chart_type": "text",
-            "content": "<div style='color: white; text-align: center; background-color: #010b13; padding: 2px'><h2 style='margin-top: 1rem'>Please wait for calculations to finish.</h2><p><i>This page will update when calculations are done. It might take some time.</i></p><img style='text-align: center; margin-bottom: 0.5rem' src='" + img + "' width='50' alt=''></div></div><div style='width: 100%'><embed style='width: 100%' src='" + serviceURL + params + "'></div>"
-        }
+    
+    # ================
+    # Mock return as if the 2nd request is implemented
+    # ================
+    return HandleRenderGet(args)
 
 # Handle the second request to /render
 # Gets data from backend when done with calculations
@@ -35,8 +53,8 @@ def HandleRenderPost(args, serviceURL):
 def HandleRenderGet(args):
     # Input validation, and error response
     if not ValidationOfRenderArgs(args):
-        return errorChart
-    
+        return ReturnErrorResponse()
+
     # Train if desired by user
     if args["option"] == "tp" or args["option"] == "t":
         trainReq = requests.post(url= noGithub["trainURL"], params = args)
@@ -50,30 +68,40 @@ def HandleRenderGet(args):
                     "content": "<h3 style='text-align: center;'>Train ID: " + trainID + "</h3>"
                 }
         else:
-            return errorChart
+            return ReturnErrorResponse("Failed in training stage")
 
     # Predict if desired by user
     if args["option"] == "tp" or args["option"] == "p":
         if args["option"] == "p":
+            if IsEmptyString(args["build_id"]):
+                return ReturnErrorResponse("No build ID entered for prediction")
             args["train_id"] = args["build_id"]
-        predictReq = requests.post(url= noGithub["predictURL"], params = args)     
+        predictReq = requests.post(url= noGithub["predictURL"], params = args)
         predictID = re.sub("[^0-9a-zA-Z_\- ]", '', predictReq.text)
         if ValidateStringNoSymbol(predictID):
             args["predict_id"] = predictID
         else:
-            return errorChart
+            return ReturnErrorResponse("Failed in predict stage")
 
     # Download datafile from GCP
     if args["option"] == "v":
+        if IsEmptyString(args["build_id"]):
+            return ReturnErrorResponse("No build ID entered for visualization")
         data = MockDownloadFromGCP(args["build_id"])
     else:
         data = MockDownloadFromGCP(args["predict_id"])
 
     # Convert into chart data and aSTEP-RFC0016 format
     aSTEPData = CsvToTimeSeries(data, "Data Set")
-    chart = TimeSeriesToGenericTsGraph(aSTEPData, aSTEPData, 2)
-    
-    return chart
+    chartTimeSeries = TimeSeriesToGenericTsGraph(aSTEPData, aSTEPData, 20)
+    chartJs = TimeSeriesToChartJs(aSTEPData, "line")
+
+    # TODO: Add visualization of build ID's
+
+    return {
+        "chart_type": "composite",
+        "content": [chartTimeSeries, chartJs]
+    }
 
 # Takes an array of args, and returns a HTML param string
 def ConvertArgsToParams(args):
@@ -90,7 +118,7 @@ def ConvertArgsToParams(args):
 # Validate input fields for /render are of correct format
 def ValidationOfRenderArgs(args):
     checks = []
-    
+
     checks.append(ValidateStringNoSymbol(args["option"]))
     checks.append(ValidateStringNoSymbol(args["build_id"]))
     checks.append(ValidateRenderNumber(args["horizon"]))
@@ -131,3 +159,13 @@ def ValidateRenderNumber(arg):
         return False
     else:
         return True
+
+# Handle request for data from /data
+def HandleData(args):
+    if IsEmptyString(args["build_id"]):
+        return "No build ID entered to get data from! Please enter valid buildID or generate one via the 'Visualize Results' option."
+    elif not ValidateStringNoSymbol(args["build_id"]):
+        return "Invalid Build ID!"
+    else:
+        data = MockDownloadFromGCP(args["build_id"])
+        return CsvToTimeSeries(data, "Data Set")
