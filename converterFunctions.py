@@ -80,6 +80,7 @@ def TimeSeriesToCsv(timeSeriesData):
 def TimeSeriesToChartJs(timeSeriesData, chartType):
     chartObj = {
         "chart_type": "time-series-data",
+        "name": "Static: " + timeSeriesData["dataSetName"],
         "content": {
             "settings": {
                 "to_chart": "chart-js",
@@ -102,6 +103,7 @@ def TimeSeriesToGenericTsGraph(originalData, predictData, predictSteps):
     
     chartObj = {
         "chart_type": "time-series-data",
+        "name": "Prediction: " + originalData["dataSetName"], 
         "content": {
             "settings": {
                 "to_chart": "generic-time-series",

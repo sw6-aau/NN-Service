@@ -13,6 +13,7 @@
 - *Train:* No need to enter anything.
 - *Predict:* Please enter a valid build-ID from a "train" build.
 - *Only Visualize:* Please enter a valid build-ID from a "predict" build.
+- *Print Raw Results:* Please enter a valid build-ID from a "predict build
 
 ## Mandatory fields:
 *The following fields are mandatory to fill in values of:*
