@@ -67,7 +67,7 @@ class Render(Resource):
         parser.add_argument("af_output")
         parser.add_argument("af_ae")
         args = parser.parse_args()
-        renderHTML = HandleRenderPost(args, request.base_url)
+        renderHTML = HandleRenderPost(args)
 
         return renderHTML
 

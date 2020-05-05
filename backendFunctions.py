@@ -26,9 +26,8 @@ def ReturnErrorResponse(reason):
         ]
     }
 
-# Handle the intial request to /render
-# This sends HTML back to give feedback and initiate long polling GET request
-def HandleRenderPost(args, serviceURL):
+# Handle the request to /render
+def HandleRenderPost(args):
     # Input validation, and error response
     if not ValidationOfRenderArgs(args):
         return ReturnErrorResponse("Failed input validation")
@@ -37,6 +36,8 @@ def HandleRenderPost(args, serviceURL):
     if IsEmptyString(args["datafile_id"]):
         uploadID = MockUploadToGCP(args["data-input"])
         args["datafile_id"] = uploadID
+    # Save original file in variable and reove from args
+    originalFile = args["data-input"]
     del args["data-input"]
 
     # Train if desired by user
@@ -44,28 +45,28 @@ def HandleRenderPost(args, serviceURL):
         # If no build_id is entered then generate one
         if IsEmptyString(args["build_id"]):
             args["build_id"] = uuid.uuid4()
+        else: # it should be empty
+            return ReturnErrorResponse("There should not be any buildID, when training")
 
         trainReq = requests.post(url= noGithub["trainURL"], params = args)
         trainID = re.sub("[^0-9a-zA-Z_\- ]", "", trainReq.text)
-        if ValidateStringNoSymbol(trainID):
-            args["train_id"] = trainID
+        
+        if ValidateStringNoSymbol(trainID) or not str(trainID) == str(args["build_id"]):
             # If only train, then return ID
             if args["option"] == "t":
-                return MakeBuildIDChart(args["train_id"], args["datafile_id"])
+                return MakeBuildIDChart(args["build_id"], args["datafile_id"])
         else:
             return ReturnErrorResponse("Failed in training stage")
 
     # Predict if desired by user
     if args["option"] == "tp" or args["option"] == "p":
-        if args["option"] == "p":
-            if IsEmptyString(args["build_id"]):
-                return ReturnErrorResponse("No build ID entered for prediction")
-            args["train_id"] = args["build_id"]
+        if args["option"] == "p" and IsEmptyString(args["build_id"]):
+            return ReturnErrorResponse("No build ID entered for prediction")
+        
         predictReq = requests.post(url= noGithub["predictURL"], params = args)
         predictID = re.sub("[^0-9a-zA-Z_\- ]", '', predictReq.text)
-        if ValidateStringNoSymbol(predictID):
-            args["predict_id"] = predictID
-        else:
+
+        if not ValidateStringNoSymbol(predictID) or str(predictID) == str(args["build_id"]):
             return ReturnErrorResponse("Failed in predict stage")
 
     # Download datafile from GCP
@@ -74,7 +75,7 @@ def HandleRenderPost(args, serviceURL):
             return ReturnErrorResponse("No data file ID entered for visualization")
         data = MockDownloadFromGCP(args["datafile_id"])
     else:
-        data = MockDownloadFromGCP(args["predict_id"])
+        data = MockDownloadFromGCP(args["build_id"])
 
     # Make all the charts needed to display
     aSTEPData = CsvToTimeSeries(data, "Data Set")
