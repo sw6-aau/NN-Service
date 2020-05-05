@@ -8,12 +8,9 @@
 
 **What do you wish to do?:** Here you can chose what should happen.
 
-**Most Recent Build ID:** This is the build ID of the step right before what you chose for the option:
-- *Train and Predict:* No need to enter anything.
-- *Train:* No need to enter anything.
-- *Predict:* Please enter a valid build-ID from a "train" build.
-- *Only Visualize:* Please enter a valid build-ID from a "predict" build.
-- *Print Raw Results:* Please enter a valid build-ID from a "predict build
+**Data File ID:** If you wish to do a datafile ID from a previous run. Leave this empty to use the file you upload.
+
+**Build ID:** If you wish to do a build ID from a previous run. Note: This field is mandatory if you want to "Print Raw Results".
 
 ## Mandatory fields:
 *The following fields are mandatory to fill in values of:*
@@ -43,4 +40,10 @@
 
 **Activation function output:** Which activation function should be used on the output.
 
-**Activation function autoencoder:** Which activation function should be used on the autoencoder convolution and deconvolution laye
+**Activation function autoencoder:** Which activation function should be used on the autoencoder convolution and deconvolution layer.
+
+## Buttons:
+
+**Visualise Results:** Press this to run the service and visualise the results. 
+
+**Print Raw Results:** Get the output data in RFC0016 format, based upon the build ID

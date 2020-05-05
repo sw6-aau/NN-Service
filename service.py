@@ -4,7 +4,7 @@ from flask import Flask, send_file, request, Response
 from flask_restful import Resource, Api, reqparse
 from flask_cors import CORS
 from storageFunctions import ValidateFileExist, ValidateFileName, WriteToPublic, GetTextFromPublic, GetJsonFromPublic, GetFileNamesInFolder
-from backendFunctions import HandleRenderPost, HandleRenderGet, HandleData
+from backendFunctions import HandleRenderPost, HandleData
 from validationFunctions import ValidateStringNoSymbol
 
 # Setup
@@ -52,6 +52,7 @@ class Render(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument("data-input", type=werkzeug.datastructures.FileStorage, location='files')
         parser.add_argument("option")
+        parser.add_argument("datafile_id")
         parser.add_argument("build_id")
         parser.add_argument("horizon")
         parser.add_argument("dropout")
@@ -69,28 +70,6 @@ class Render(Resource):
         renderHTML = HandleRenderPost(args, request.base_url)
 
         return renderHTML
-
-    # Note: This request is to use "long pulling"
-    def get(self):
-        # Parse request and save to dictionary
-        parser = reqparse.RequestParser()
-        parser.add_argument("dataset_id")
-        parser.add_argument("option")
-        parser.add_argument("build_id")
-        parser.add_argument("horizon")
-        parser.add_argument("dropout")
-        parser.add_argument("skip_rnn")
-        parser.add_argument("preset")
-        parser.add_argument("epoch")
-        parser.add_argument("hid_cnn")
-        parser.add_argument("hid_rnn")
-        parser.add_argument("hid_skip_rnn")
-        parser.add_argument("window_rnn")
-        parser.add_argument("windows_hw")
-        parser.add_argument("af_output")
-        parser.add_argument("af_ae")
-        args = parser.parse_args()
-        return HandleRenderGet(args)
 
 # The "/data" endpoint
 class Data(Resource):

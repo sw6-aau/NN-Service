@@ -4,7 +4,7 @@ import glob
 # Validate that it is not an empty string
 def IsEmptyString(str):
     if str == "":
-        print("ERROR: Empty string found")
+        print("Empty string found")
         return True
     else:
         return False

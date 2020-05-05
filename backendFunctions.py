@@ -33,40 +33,25 @@ def HandleRenderPost(args, serviceURL):
     if not ValidationOfRenderArgs(args):
         return ReturnErrorResponse("Failed input validation")
 
-    # Upload file, and replace dataset with id in args
-    uploadID = MockUploadToGCP(args["data-input"])
+    # Upload file, if no datafile_id has been set
+    if IsEmptyString(args["datafile_id"]):
+        uploadID = MockUploadToGCP(args["data-input"])
+        args["datafile_id"] = uploadID
     del args["data-input"]
-    args["dataset_id"] = uploadID
-    params = ConvertArgsToParams(args)
-
-    # Return initial HTML
-    img = noGithub["waitingImg"]
-    
-    # ================
-    # Mock return as if the 2nd request is implemented
-    # ================
-    return HandleRenderGet(args)
-
-# Handle the second request to /render
-# Gets data from backend when done with calculations
-# Note this is intended to use long polling (wait a long time to resond)
-def HandleRenderGet(args):
-    # Input validation, and error response
-    if not ValidationOfRenderArgs(args):
-        return ReturnErrorResponse()
 
     # Train if desired by user
     if args["option"] == "tp" or args["option"] == "t":
+        # If no build_id is entered then generate one
+        if IsEmptyString(args["build_id"]):
+            args["build_id"] = uuid.uuid4()
+
         trainReq = requests.post(url= noGithub["trainURL"], params = args)
         trainID = re.sub("[^0-9a-zA-Z_\- ]", "", trainReq.text)
         if ValidateStringNoSymbol(trainID):
             args["train_id"] = trainID
             # If only train, then return ID
             if args["option"] == "t":
-                return {
-                    "chart_type": "text",
-                    "content": "<h3 style='text-align: center;'>Train ID: " + trainID + "</h3>"
-                }
+                return MakeBuildIDChart(args["train_id"], args["datafile_id"])
         else:
             return ReturnErrorResponse("Failed in training stage")
 
@@ -85,22 +70,34 @@ def HandleRenderGet(args):
 
     # Download datafile from GCP
     if args["option"] == "v":
-        if IsEmptyString(args["build_id"]):
-            return ReturnErrorResponse("No build ID entered for visualization")
-        data = MockDownloadFromGCP(args["build_id"])
+        if IsEmptyString(args["datafile_id"]):
+            return ReturnErrorResponse("No data file ID entered for visualization")
+        data = MockDownloadFromGCP(args["datafile_id"])
     else:
         data = MockDownloadFromGCP(args["predict_id"])
 
-    # Convert into chart data and aSTEP-RFC0016 format
+    # Make all the charts needed to display
     aSTEPData = CsvToTimeSeries(data, "Data Set")
     chartTimeSeries = TimeSeriesToGenericTsGraph(aSTEPData, aSTEPData, 20)
     chartJs = TimeSeriesToChartJs(aSTEPData, "line")
-
-    # TODO: Add visualization of build ID's
+    buildIDChart = MakeBuildIDChart(args["build_id"], args["datafile_id"])
 
     return {
-        "chart_type": "composite",
-        "content": [chartTimeSeries, chartJs]
+        "chart_type": "composite-scroll",
+        "content": [
+            buildIDChart,
+            {
+                "chart_type": "composite",
+                "content": [chartTimeSeries, chartJs]
+            }
+        ]
+    }
+
+# Make a build ID HTML chart
+def MakeBuildIDChart(buildID, datafileID):
+    return {
+        "chart_type": "text",
+        "content": "<div style='color: white; text-align: center; background-color: #000000; padding: 2px'><p style='margin: 0; padding: 5px;'>Build ID: <i>" + str(buildID) + "</i></p><pstyle='margin: 0; padding: 5px;'>Data File ID: <i>" + str(datafileID) + "</i></p><div>" 
     }
 
 # Takes an array of args, and returns a HTML param string
@@ -120,6 +117,7 @@ def ValidationOfRenderArgs(args):
     checks = []
 
     checks.append(ValidateStringNoSymbol(args["option"]))
+    checks.append(ValidateStringNoSymbol(args["datafile_id"]))
     checks.append(ValidateStringNoSymbol(args["build_id"]))
     checks.append(ValidateRenderNumber(args["horizon"]))
     checks.append(ValidateRenderNumber(args["dropout"]))
@@ -140,10 +138,6 @@ def ValidationOfRenderArgs(args):
         checks.append(ValidateRenderNumber(args["windows_hw"]))
         checks.append(ValidateStringNoSymbol(args["af_output"]))
         checks.append(ValidateStringNoSymbol(args["af_ae"]))
-
-    # Only check these if the file exist
-    if "dataset_id" in args:
-        checks.append(ValidateStringNoSymbol(args["dataset_id"]))
 
     # Check if any validation failed
     for check in checks:
