@@ -4,3 +4,4 @@ flask_cors
 requests
 google-cloud-storage
 uuid
+wget

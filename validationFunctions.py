@@ -4,7 +4,7 @@ import glob
 # Validate that it is not an empty string
 def IsEmptyString(str):
     if str == "":
-        print("ERROR: Empty string found")
+        print("Empty string found")
         return True
     else:
         return False
@@ -54,12 +54,12 @@ def ValidateStringNoSymbol(string):
 # Ensure not able to access folders below intended folder and has valid chars
 def ValidateRelativePath(relativePath):
     # No need to check if nothing
-    if relativePath == "":
+    if str(relativePath) == "":
         return True
     
     # Do regex to figure check
-    backPath = re.search("\.\.", relativePath)
-    notAllowedChars = re.search("[^\w\.\/-]", relativePath)
+    backPath = re.search("\.\.", str(relativePath))
+    notAllowedChars = re.search("[^\w\.\/-]", str(relativePath))
 
     # Decide what to do
     if backPath == None and notAllowedChars == None:
@@ -100,4 +100,11 @@ def ValidateAstepTimeSeries(obj):
     if not "dataSetName" in obj or not "graphs" in obj:
         return False
     else:
+        return True
+
+# Validate a parameter file
+def ValidateParamFile(paramFile):
+    if paramFile is None:
+        return False
+    else: 
         return True

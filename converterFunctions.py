@@ -11,19 +11,22 @@ def CsvToTimeSeries(csvFile, dataSetName):
     reader = csv.reader(csvFile, delimiter=",")
     columnIndex = 0
     line = 0
-
+    first = True
     # First create the graph objects
     for row in reader:
-        if line == 0:
-            for column in row:
-                outputObj["graphs"].append(MakeDefaultGraphObj("Graph " + str(columnIndex)))
-                columnIndex += 1
+        if first == True:
+            first = False
+        else:
+            if line == 0:
+                for column in row:
+                    outputObj["graphs"].append(MakeDefaultGraphObj("Graph " + str(columnIndex)))
+                    columnIndex += 1
 
-        columnIndex = 0
-        for column in row:
-            outputObj["graphs"][columnIndex]["data"].append(MakeDataPointObj(line, column))
-            columnIndex += 1
-        line += 1
+            columnIndex = 0
+            for column in row:
+                outputObj["graphs"][columnIndex]["data"].append(MakeDataPointObj(line, column))
+                columnIndex += 1
+            line += 1
 
     return outputObj
 

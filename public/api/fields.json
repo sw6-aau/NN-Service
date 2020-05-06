@@ -25,8 +25,14 @@
             ]
         },
         {
+            "name": "datafile_id",
+            "label": "Data file ID",
+            "placeholder": "(Please see documentation)",
+            "type": "input"
+        },
+        {
             "name": "build_id",
-            "label": "Most Recent Build ID",
+            "label": "Build ID",
             "placeholder": "(Please see documentation)",
             "type": "input"
         },
@@ -131,7 +137,7 @@
         {
             "name": "af_ae",
             "label": "Activation function autoencoder",
-            "default": "sigmoid",
+            "default": "relu",
             "type": "select",
             "options": [
                 {
