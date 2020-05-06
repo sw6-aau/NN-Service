@@ -5,7 +5,7 @@ from storageFunctions import UploadToGCP, MockDownloadFromGCP, GetJsonFromPublic
 from validationFunctions import ValidateNumber, ValidateNumNotNegative, ValidateStringNoSymbol, IsEmptyString, ValidateParamFile
 from converterFunctions import CsvToTimeSeries, TimeSeriesToChartJs, TimeSeriesToGenericTsGraph
 
-noGithub = GetJsonFromPrivate("noGithub", "privateData.json")
+noGithub = GetJsonFromPrivate("noGithub", "productionData.json")
 errorChart = GetJsonFromPublic("api", "errorChart.json")
 errorHTML = errorChart["content"]
 
@@ -32,6 +32,10 @@ def HandleRenderPost(args):
     if not ValidationOfRenderArgs(args):
         return ReturnErrorResponse("Failed input validation")
 
+    # Fill preset values if desired
+    if not args["preset"] == "m":
+        args = FillPresetValues(args, args["preset"])
+
     # If no build_id is entered then generate one
     if IsEmptyString(args["build_id"]):
         if args["option"] == "tp" or args["option"] == "t":
@@ -51,7 +55,9 @@ def HandleRenderPost(args):
 
     # Train if desired by user
     if args["option"] == "tp" or args["option"] == "t":
-        trainReq = requests.post(url= noGithub["trainURL"], params = args)
+        trainParams = MakeTrainParams(args)
+        url = str(noGithub["trainURL"]) + str(ConvertArgsToParams(trainParams))
+        trainReq = requests.post(url)
         trainID = re.sub("[^0-9a-zA-Z_\- ]", "", trainReq.text)
         
         if ValidateStringNoSymbol(trainID) or not str(trainID) == str(args["build_id"]):
@@ -97,6 +103,34 @@ def HandleRenderPost(args):
         ]
     }
 
+# Make take out the params needed for /train
+def MakeTrainParams(args):
+    trainParams = {}
+    trainParams["build_id"] = args["build_id"]
+    trainParams["horizon"] = args["horizon"]
+    trainParams["dropout"] = args["dropout"]
+    trainParams["skip_rnn"] = args["skip_rnn"]
+    trainParams["epoch"] = args["epoch"]
+    trainParams["hid_cnn"] = args["hid_cnn"]
+    trainParams["hid_rnn"] = args["hid_rnn"]
+    trainParams["window_rnn"] = args["window_rnn"]
+    trainParams["windows_hw"] = args["windows_hw"]
+    return trainParams
+
+# Fill preset values
+def FillPresetValues(args, presetName):
+    preset = GetJsonFromPublic("data", "presetValues.json")
+    presetArr = preset[presetName]
+    args["epoch"] = presetArr[0]
+    args["hid_cnn"] = presetArr[1]
+    args["hid_rnn"] = presetArr[2]
+    args["hid_skip_rnn"] = presetArr[3]
+    args["window_rnn"] = presetArr[4]
+    args["windows_hw"] = presetArr[5]
+    args["af_output"] = presetArr[6]
+    args["af_ae"] = presetArr[7]
+    return args
+
 # Make a build ID HTML chart
 def MakeBuildIDChart(buildID, datafileID):
     return {
@@ -113,7 +147,7 @@ def ConvertArgsToParams(args):
             paramsString += "&"
         else:
             first = False
-        paramsString += arg + "=" + args[arg]
+        paramsString += str(arg) + "=" + str(args[arg])
     return paramsString
 
 # Validate input fields for /render are of correct format
