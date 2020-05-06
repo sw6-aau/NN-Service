@@ -72,7 +72,9 @@ def HandleRenderPost(args):
         if args["option"] == "p" and IsEmptyString(args["build_id"]):
             return ReturnErrorResponse("No build ID entered for prediction")
         
-        predictReq = requests.post(url= noGithub["predictURL"], params = args)
+        predictParams = MakePredictParams(args)
+        url = str(noGithub["predictURL"]) + str(ConvertArgsToParams(predictParams))
+        predictReq = requests.post(url)
         predictID = re.sub("[^0-9a-zA-Z_\- ]", '', predictReq.text)
 
         if not ValidateStringNoSymbol(predictID) or str(predictID) == str(args["build_id"]):
@@ -103,7 +105,7 @@ def HandleRenderPost(args):
         ]
     }
 
-# Make take out the params needed for /train
+# Take out the params needed for /train
 def MakeTrainParams(args):
     trainParams = {}
     trainParams["build_id"] = args["build_id"]
@@ -116,6 +118,13 @@ def MakeTrainParams(args):
     trainParams["window_rnn"] = args["window_rnn"]
     trainParams["windows_hw"] = args["windows_hw"]
     return trainParams
+
+# Take out the params needed for /predict
+def MakePredictParams(args):
+    predictParams = {}
+    predictParams["build_id"] = args["build_id"]
+    predictParams["datafile_id"] = args["datafile_id"]
+    return predictParams
 
 # Fill preset values
 def FillPresetValues(args, presetName):
