@@ -1,7 +1,7 @@
 import requests
 import re
 import uuid
-from storageFunctions import UploadToGCP, MockDownloadFromGCP, GetJsonFromPublic, GetJsonFromPrivate, GetTextFromPublic
+from storageFunctions import UploadToGCP, DownloadFromGCP, GetJsonFromPublic, GetJsonFromPrivate, GetTextFromPublic
 from validationFunctions import ValidateNumber, ValidateNumNotNegative, ValidateStringNoSymbol, IsEmptyString, ValidateParamFile
 from converterFunctions import CsvToTimeSeries, TimeSeriesToChartJs, TimeSeriesToGenericTsGraph
 
@@ -57,7 +57,7 @@ def HandleRenderPost(args):
     if args["option"] == "tp" or args["option"] == "t":
         trainParams = MakeTrainParams(args)
         url = str(noGithub["trainURL"]) + str(ConvertArgsToParams(trainParams))
-        trainReq = requests.post(url)
+        trainReq = requests.get(url)
         trainID = re.sub("[^0-9a-zA-Z_\- ]", "", trainReq.text)
         
         if ValidateStringNoSymbol(trainID) or not str(trainID) == str(args["build_id"]):
@@ -74,19 +74,21 @@ def HandleRenderPost(args):
         
         predictParams = MakePredictParams(args)
         url = str(noGithub["predictURL"]) + str(ConvertArgsToParams(predictParams))
-        predictReq = requests.post(url)
+        predictReq = requests.get(url)
         predictID = re.sub("[^0-9a-zA-Z_\- ]", '', predictReq.text)
 
-        if not ValidateStringNoSymbol(predictID) or str(predictID) == str(args["build_id"]):
-            return ReturnErrorResponse("Failed in predict stage")
+        if not ValidateStringNoSymbol(predictID):
+            return ReturnErrorResponse("Failed in predict stage: Invalid predictID")
+        if not str(predictID) == str(args["build_id"]):
+            return ReturnErrorResponse("Failed in predict stage: Incorrect match of IDs" + str(predictID) + " != " + str(args["build_id"]))
 
     # Download datafile from GCP
     if args["option"] == "v":
         if IsEmptyString(args["datafile_id"]):
             return ReturnErrorResponse("No data file ID entered for visualization")
-        data = MockDownloadFromGCP(args["datafile_id"])
+        data = DownloadFromGCP(args["datafile_id"])
     else:
-        data = MockDownloadFromGCP(args["build_id"])
+        data = DownloadFromGCP(args["build_id"])
 
     # Make all the charts needed to display
     aSTEPDataOuptput = CsvToTimeSeries(data, "Data Set")
@@ -208,5 +210,5 @@ def HandleData(args):
     elif not ValidateStringNoSymbol(args["build_id"]):
         return "Invalid Build ID!"
     else:
-        data = MockDownloadFromGCP(args["build_id"])
+        data = DownloadFromGCP(args["build_id"])
         return CsvToTimeSeries(data, "Data Set")

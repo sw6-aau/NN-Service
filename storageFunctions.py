@@ -2,6 +2,7 @@ import re
 import glob
 import json
 import requests
+import wget
 from validationFunctions import ValidateRelativePath, ValidateFileName, ValidateFileExist
 
 # Write a file to the public folder
@@ -74,14 +75,13 @@ def UploadToGCP(fileData, fileName):
     return fileName
 
 # Download from Google Cloud Platform
-def DownloadFromGCP(fileData, fileName):
+def DownloadFromGCP(fileName):
     if not ValidateFileName(fileName):
         return False
-    storage_client = storage.Client()
-    bucket = storage_client.bucket("")
-    blob = bucket.blob(re.sub("[^0-9a-zA-Z]", "", fileName))
-    dataString = blob.download_as_string(fileData)
-    return dataString
+    urls = GetJsonFromPrivate("noGithub", "productionData.json")
+    url = urls["downloadURL"] + str(fileName) + ".predict"
+    wget.download(url, "private/data/" + str(fileName) + ".predict")
+    return open("private/data/" + str(fileName) + ".predict", "r")
 
 # Used for testing purposes
 def MockUploadToGCP(fileData):
