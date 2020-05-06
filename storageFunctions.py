@@ -3,7 +3,6 @@ import glob
 import json
 import requests
 from validationFunctions import ValidateRelativePath, ValidateFileName, ValidateFileExist
-from google.cloud import storage
 
 # Write a file to the public folder
 def WriteToPublic(relativePath, fileData, fileName):
@@ -66,13 +65,13 @@ def GetFileNamesInFolder(relativePath):
 
 # Upload to Google Cloud Platform
 def UploadToGCP(fileData, fileName):
-    if not ValidateFileName(fileName):
+    if not ValidateFileName(str(fileName)):
         return False
-    storage_client = storage.Client()
-    bucket = storage_client.bucket("")
-    blob = bucket.blob(re.sub("[^0-9a-zA-Z]", "", fileName))
-    blob.upload_from_filename(fileData)
-    return True
+    urls = GetJsonFromPrivate("noGithub", "productionData.json")
+    url = str(urls["uploadURL"]) + "?build_id=" + str(fileName)
+    files = {'file': fileData}
+    r = requests.post(url, files=files)
+    return fileName
 
 # Download from Google Cloud Platform
 def DownloadFromGCP(fileData, fileName):

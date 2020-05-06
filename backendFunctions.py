@@ -1,8 +1,8 @@
 import requests
 import re
 import uuid
-from storageFunctions import MockUploadToGCP, MockDownloadFromGCP, GetJsonFromPublic, GetJsonFromPrivate, GetTextFromPublic
-from validationFunctions import ValidateNumber, ValidateNumNotNegative, ValidateStringNoSymbol, IsEmptyString
+from storageFunctions import UploadToGCP, MockDownloadFromGCP, GetJsonFromPublic, GetJsonFromPrivate, GetTextFromPublic
+from validationFunctions import ValidateNumber, ValidateNumNotNegative, ValidateStringNoSymbol, IsEmptyString, ValidateParamFile
 from converterFunctions import CsvToTimeSeries, TimeSeriesToChartJs, TimeSeriesToGenericTsGraph
 
 noGithub = GetJsonFromPrivate("noGithub", "privateData.json")
@@ -32,22 +32,25 @@ def HandleRenderPost(args):
     if not ValidationOfRenderArgs(args):
         return ReturnErrorResponse("Failed input validation")
 
+    # If no build_id is entered then generate one
+    if IsEmptyString(args["build_id"]):
+        if args["option"] == "tp" or args["option"] == "t":
+            if not ValidateParamFile(args["data-input"]):
+                return ReturnErrorResponse("No file has been uploaded, when it is expected")
+            args["build_id"] = re.sub("[^0-9a-zA-Z_\- ]", "", str(uuid.uuid4()))
+        else:
+            return ReturnErrorResponse("There should not be any buildID, when training")
+
     # Upload file, if no datafile_id has been set
     if IsEmptyString(args["datafile_id"]):
-        uploadID = MockUploadToGCP(args["data-input"])
+        uploadID = UploadToGCP(args["data-input"], args["build_id"])
         args["datafile_id"] = uploadID
     # Save original file in variable and reove from args
-    originalFile = args["data-input"]
+    originalFile = CsvToTimeSeries(args["data-input"], "data set")
     del args["data-input"]
 
     # Train if desired by user
     if args["option"] == "tp" or args["option"] == "t":
-        # If no build_id is entered then generate one
-        if IsEmptyString(args["build_id"]):
-            args["build_id"] = uuid.uuid4()
-        else: # it should be empty
-            return ReturnErrorResponse("There should not be any buildID, when training")
-
         trainReq = requests.post(url= noGithub["trainURL"], params = args)
         trainID = re.sub("[^0-9a-zA-Z_\- ]", "", trainReq.text)
         
@@ -78,9 +81,9 @@ def HandleRenderPost(args):
         data = MockDownloadFromGCP(args["build_id"])
 
     # Make all the charts needed to display
-    aSTEPData = CsvToTimeSeries(data, "Data Set")
-    chartTimeSeries = TimeSeriesToGenericTsGraph(aSTEPData, aSTEPData, 20)
-    chartJs = TimeSeriesToChartJs(aSTEPData, "line")
+    aSTEPDataOuptput = CsvToTimeSeries(data, "Data Set")
+    chartTimeSeries = TimeSeriesToGenericTsGraph(originalFile, aSTEPDataOuptput, 20)
+    chartJs = TimeSeriesToChartJs(aSTEPDataOuptput, "line")
     buildIDChart = MakeBuildIDChart(args["build_id"], args["datafile_id"])
 
     return {
