@@ -1,9 +1,10 @@
 import requests
 import re
 import uuid
+import json
 from storageFunctions import UploadToGCP, DownloadFromGCP, GetJsonFromPublic, GetJsonFromPrivate, GetTextFromPublic
 from validationFunctions import ValidateNumber, ValidateNumNotNegative, ValidateStringNoSymbol, IsEmptyString, ValidateParamFile
-from converterFunctions import CsvToTimeSeries, TimeSeriesToChartJs, TimeSeriesToGenericTsGraph
+from converterFunctions import CsvToTimeSeries, TimeSeriesToChartJs, TimeSeriesToGenericTsGraph, TimeSeriesToCsv
 
 noGithub = GetJsonFromPrivate("noGithub", "productionData.json")
 errorChart = GetJsonFromPublic("api", "errorChart.json")
@@ -42,16 +43,21 @@ def HandleRenderPost(args):
             if not ValidateParamFile(args["data-input"]):
                 return ReturnErrorResponse("No file has been uploaded, when it is expected")
             args["build_id"] = re.sub("[^0-9a-zA-Z_\- ]", "", str(uuid.uuid4()))
-        else:
-            return ReturnErrorResponse("There should not be any buildID, when training")
+        elif args["option"] == "p":
+            return ReturnErrorResponse("You need a build ID if you are predicting")
 
-    # Upload file, if no datafile_id has been set
-    if IsEmptyString(args["datafile_id"]):
+    # Upload file, if training is selected
+    if args["option"] == "tp" or args["option"] == "t":
         uploadID = UploadToGCP(args["data-input"], args["build_id"])
         args["datafile_id"] = uploadID
-    # Save original file in variable and reove from args
-    originalFile = CsvToTimeSeries(args["data-input"], "data set")
-    del args["data-input"]
+
+    # Download orgiginal file if visualize or predict mode, or if using datafile
+    if args["option"] == "p" or args["option"] == "v":
+        if IsEmptyString(args["datafile_id"]):
+            return ReturnErrorResponse("No datafile ID has been set")
+    
+    # Save orginal file
+    originalFile = CsvToTimeSeries(DownloadFromGCP(args["datafile_id"]), "data set")
 
     # Train if desired by user
     if args["option"] == "tp" or args["option"] == "t":
@@ -69,14 +75,12 @@ def HandleRenderPost(args):
 
     # Predict if desired by user
     if args["option"] == "tp" or args["option"] == "p":
-        if args["option"] == "p" and IsEmptyString(args["build_id"]):
+        if args["option"] == "p" and (IsEmptyString(args["build_id"]) or IsEmptyString(args["datafile_id"])):
             return ReturnErrorResponse("No build ID entered for prediction")
-        
         predictParams = MakePredictParams(args)
         url = str(noGithub["predictURL"]) + str(ConvertArgsToParams(predictParams))
         predictReq = requests.get(url)
         predictID = re.sub("[^0-9a-zA-Z_\- ]", '', predictReq.text)
-
         if not ValidateStringNoSymbol(predictID):
             return ReturnErrorResponse("Failed in predict stage: Invalid predictID")
         if not str(predictID) == str(args["build_id"]):
@@ -86,15 +90,18 @@ def HandleRenderPost(args):
     if args["option"] == "v":
         if IsEmptyString(args["datafile_id"]):
             return ReturnErrorResponse("No data file ID entered for visualization")
-        data = DownloadFromGCP(args["datafile_id"])
+        data = DownloadFromGCP(args["datafile_id"] + ".predict")
     else:
-        data = DownloadFromGCP(args["build_id"])
+        data = DownloadFromGCP(args["build_id"] + ".predict")
 
     # Make all the charts needed to display
     aSTEPDataOuptput = CsvToTimeSeries(data, "Data Set")
     chartTimeSeries = TimeSeriesToGenericTsGraph(originalFile, aSTEPDataOuptput, 20)
-    chartJs = TimeSeriesToChartJs(aSTEPDataOuptput, "line")
+    originalChartJs = TimeSeriesToChartJs(originalFile, "line", "Input")
+    predictChartJs = TimeSeriesToChartJs(aSTEPDataOuptput, "line", "Predict")
     buildIDChart = MakeBuildIDChart(args["build_id"], args["datafile_id"])
+    outputDataAstep = MakeDataChart("Output - RFC0016", str(json.dumps(aSTEPDataOuptput, indent=4)))
+    outputDataCsv = MakeDataChart("Output - CSV", str(TimeSeriesToCsv(aSTEPDataOuptput)))
 
     return {
         "chart_type": "composite-scroll",
@@ -102,7 +109,7 @@ def HandleRenderPost(args):
             buildIDChart,
             {
                 "chart_type": "composite",
-                "content": [chartTimeSeries, chartJs]
+                "content": [chartTimeSeries, originalChartJs, predictChartJs, outputDataAstep, outputDataCsv]
             }
         ]
     }
@@ -132,14 +139,16 @@ def MakePredictParams(args):
 def FillPresetValues(args, presetName):
     preset = GetJsonFromPublic("data", "presetValues.json")
     presetArr = preset[presetName]
-    args["epoch"] = presetArr[0]
-    args["hid_cnn"] = presetArr[1]
-    args["hid_rnn"] = presetArr[2]
-    args["hid_skip_rnn"] = presetArr[3]
-    args["window_rnn"] = presetArr[4]
-    args["windows_hw"] = presetArr[5]
-    args["af_output"] = presetArr[6]
-    args["af_ae"] = presetArr[7]
+    args["horizon"] = presetArr[0]
+    args["dropout"] = presetArr[1]
+    args["skip_rnn"] = presetArr[2]
+    args["hid_cnn"] = presetArr[3]
+    args["hid_rnn"] = presetArr[4]
+    args["hid_skip_rnn"] = presetArr[5]
+    args["window_rnn"] = presetArr[6]
+    args["windows_hw"] = presetArr[7]
+    args["af_output"] = presetArr[8]
+    args["af_ae"] = presetArr[9]
     return args
 
 # Make a build ID HTML chart
@@ -147,6 +156,14 @@ def MakeBuildIDChart(buildID, datafileID):
     return {
         "chart_type": "text",
         "content": "<div style='color: white; text-align: center; background-color: #000000; padding: 2px'><p style='margin: 0; padding: 5px;'>Build ID: <i>" + str(buildID) + "</i></p><pstyle='margin: 0; padding: 5px;'>Data File ID: <i>" + str(datafileID) + "</i></p><div>" 
+    }
+
+# Make a data chart to display raw data to users
+def MakeDataChart(name, data):
+    return {
+        "chart_type": "text",
+        "name": name,
+        "content": "<div style='width: 95%; height: 70vh; margin: 2.5%'><textarea style='width: 100%; height: 100%; margin: 0'>" + data + "</textarea></div>"
     }
 
 # Takes an array of args, and returns a HTML param string
@@ -166,27 +183,32 @@ def ValidationOfRenderArgs(args):
     checks = []
 
     checks.append(ValidateStringNoSymbol(args["option"]))
-    checks.append(ValidateStringNoSymbol(args["datafile_id"]))
-    checks.append(ValidateStringNoSymbol(args["build_id"]))
-    checks.append(ValidateRenderNumber(args["horizon"]))
-    checks.append(ValidateRenderNumber(args["dropout"]))
-    # Ensure dropout is <= 1
-    if ValidateRenderNumber(args["dropout"]) and float(args["dropout"]) > 1:
-            print("ERROR: Argument '" + args["dropout"] +"' failed validation, as n > 1")
-            checks.append(False)
-    checks.append(ValidateRenderNumber(args["skip_rnn"]))
-    checks.append(ValidateStringNoSymbol(args["preset"]))
-
-    # Only check rest if manual-mode is chosen
-    if ValidateStringNoSymbol(args["preset"]) and args["preset"] == "m":
+    if args["option"] == "tp" or args["option"] == "t":
         checks.append(ValidateRenderNumber(args["epoch"]))
-        checks.append(ValidateRenderNumber(args["hid_cnn"]))
-        checks.append(ValidateRenderNumber(args["hid_rnn"]))
-        checks.append(ValidateRenderNumber(args["hid_skip_rnn"]))
-        checks.append(ValidateRenderNumber(args["window_rnn"]))
-        checks.append(ValidateRenderNumber(args["windows_hw"]))
-        checks.append(ValidateStringNoSymbol(args["af_output"]))
-        checks.append(ValidateStringNoSymbol(args["af_ae"]))
+        checks.append(ValidateStringNoSymbol(args["preset"]))
+        # Only check rest if manual-mode is chosen
+        if ValidateStringNoSymbol(args["preset"]) and args["preset"] == "m":
+            checks.append(ValidateRenderNumber(args["horizon"]))
+            checks.append(ValidateRenderNumber(args["dropout"]))
+            # Ensure dropout is <= 1
+            if ValidateRenderNumber(args["dropout"]) and float(args["dropout"]) > 1:
+                    print("ERROR: Argument '" + args["dropout"] +"' failed validation, as n > 1")
+                    checks.append(False)
+            checks.append(ValidateRenderNumber(args["skip_rnn"]))
+            checks.append(ValidateRenderNumber(args["hid_cnn"]))
+            checks.append(ValidateRenderNumber(args["hid_rnn"]))
+            checks.append(ValidateRenderNumber(args["hid_skip_rnn"]))
+            checks.append(ValidateRenderNumber(args["window_rnn"]))
+            checks.append(ValidateRenderNumber(args["windows_hw"]))
+            checks.append(ValidateStringNoSymbol(args["af_output"]))
+            checks.append(ValidateStringNoSymbol(args["af_ae"]))
+
+    if args["option"] == "p":
+        checks.append(ValidateStringNoSymbol(args["datafile_id"]))
+        checks.append(ValidateStringNoSymbol(args["build_id"]))
+
+    if args["option"] == "v":
+        checks.append(ValidateStringNoSymbol(args["datafile_id"]))
 
     # Check if any validation failed
     for check in checks:

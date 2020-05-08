@@ -4,177 +4,311 @@
             "name": "option",
             "label": "What do you wish to do?",
             "default": "tp",
-            "type": "select",
+            "type": "formset-select",
             "options": [
                 {
                     "name": "Train and Predict",
-                    "value": "tp"
+                    "value": "tp",
+                    "fields": [
+                        {
+                            "name": "epoch",
+                            "label": "Epochs",
+                            "default": 4,
+                            "type": "input-number"
+                        },
+                        {
+                            "name": "preset",
+                            "label": "Param preset",
+                            "default": "p1",
+                            "type": "formset-select",
+                            "options": [
+                                {
+                                    "name": "Preset 1",
+                                    "value": "p1",
+                                    "fields": []
+                                },
+                                {
+                                    "name": "Preset 2",
+                                    "value": "p2",
+                                    "fields": []
+                                },
+                                {
+                                    "name": "Manual-mode",
+                                    "value": "m",
+                                    "fields": [
+                                        {
+                                            "name": "horizon",
+                                            "label": "Horizon",
+                                            "placeholder": "(Only in manual-mode)",
+                                            "type": "input-number"
+                                        },
+                                        {
+                                            "name": "dropout",
+                                            "label": "Dropout",
+                                            "placeholder": "(Only in manual-mode)",
+                                            "type": "input-number"
+                                        },
+                                        {
+                                            "name": "skip_rnn",
+                                            "label": "RNN-skip units",
+                                            "placeholder": "(Only in manual-mode)",
+                                            "type": "input-number"
+                                        },
+                                        {
+                                            "name": "hid_cnn",
+                                            "label": "Autoencoder CNN hidden units",
+                                            "placeholder": "(Only in manual-mode)",
+                                            "type": "input-number"
+                                        },
+                                        {
+                                            "name": "hid_rnn",
+                                            "label": "RNN hidden units",
+                                            "placeholder": "(Only in manual-mode)",
+                                            "type": "input-number"
+                                        },
+                                        {
+                                            "name": "hid_skip_rnn",
+                                            "label": "RNN-skip hidden units",
+                                            "placeholder": "(Only in manual-mode)",
+                                            "type": "input-number"
+                                        },
+                                        {
+                                            "name": "window_rnn",
+                                            "label": "RNN window size",
+                                            "placeholder": "(Only in manual-mode)",
+                                            "type": "input-number"
+                                        },
+                                        {
+                                            "name": "windows_hw",
+                                            "label": "Highway window",
+                                            "placeholder": "(Only in manual-mode)",
+                                            "type": "input-number"
+                                        },
+                                        {
+                                            "name": "af_output",
+                                            "label": "Activation function output",
+                                            "default": "sigmoid",
+                                            "type": "select",
+                                            "options": [
+                                                {
+                                                    "name": "None",
+                                                    "value": "none"
+                                                },
+                                                {
+                                                    "name": "Sigmoid",
+                                                    "value": "sigmoid"
+                                                },
+                                                {
+                                                    "name": "Tanh",
+                                                    "value": "tanh"
+                                                },
+                                                {
+                                                    "name": "ReLU",
+                                                    "value": "relu"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "name": "af_ae",
+                                            "label": "Activation function autoencoder",
+                                            "default": "relu",
+                                            "type": "select",
+                                            "options": [
+                                                {
+                                                    "name": "None",
+                                                    "value": "none"
+                                                },
+                                                {
+                                                    "name": "Sigmoid",
+                                                    "value": "sigmoid"
+                                                },
+                                                {
+                                                    "name": "Tanh",
+                                                    "value": "tanh"
+                                                },
+                                                {
+                                                    "name": "ReLU",
+                                                    "value": "relu"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
                 },
                 {
                     "name": "Train",
-                    "value": "t"
+                    "value": "t",
+                    "fields": [
+                        {
+                            "name": "epoch",
+                            "label": "Epochs",
+                            "default": 4,
+                            "type": "input-number"
+                        },
+                        {
+                            "name": "preset",
+                            "label": "Param preset",
+                            "default": "p1",
+                            "type": "formset-select",
+                            "options": [
+                                {
+                                    "name": "Preset 1",
+                                    "value": "p1",
+                                    "fields": []
+                                },
+                                {
+                                    "name": "Preset 2",
+                                    "value": "p2",
+                                    "fields": []
+                                },
+                                {
+                                    "name": "Manual-mode",
+                                    "value": "m",
+                                    "fields": [
+                                        {
+                                            "name": "horizon",
+                                            "label": "Horizon",
+                                            "placeholder": "(Only in manual-mode)",
+                                            "type": "input-number"
+                                        },
+                                        {
+                                            "name": "dropout",
+                                            "label": "Dropout",
+                                            "placeholder": "(Only in manual-mode)",
+                                            "type": "input-number"
+                                        },
+                                        {
+                                            "name": "skip_rnn",
+                                            "label": "RNN-skip units",
+                                            "placeholder": "(Only in manual-mode)",
+                                            "type": "input-number"
+                                        },
+                                        {
+                                            "name": "hid_cnn",
+                                            "label": "Autoencoder CNN hidden units",
+                                            "placeholder": "(Only in manual-mode)",
+                                            "type": "input-number"
+                                        },
+                                        {
+                                            "name": "hid_rnn",
+                                            "label": "RNN hidden units",
+                                            "placeholder": "(Only in manual-mode)",
+                                            "type": "input-number"
+                                        },
+                                        {
+                                            "name": "hid_skip_rnn",
+                                            "label": "RNN-skip hidden units",
+                                            "placeholder": "(Only in manual-mode)",
+                                            "type": "input-number"
+                                        },
+                                        {
+                                            "name": "window_rnn",
+                                            "label": "RNN window size",
+                                            "placeholder": "(Only in manual-mode)",
+                                            "type": "input-number"
+                                        },
+                                        {
+                                            "name": "windows_hw",
+                                            "label": "Highway window",
+                                            "placeholder": "(Only in manual-mode)",
+                                            "type": "input-number"
+                                        },
+                                        {
+                                            "name": "af_output",
+                                            "label": "Activation function output",
+                                            "default": "sigmoid",
+                                            "type": "select",
+                                            "options": [
+                                                {
+                                                    "name": "None",
+                                                    "value": "none"
+                                                },
+                                                {
+                                                    "name": "Sigmoid",
+                                                    "value": "sigmoid"
+                                                },
+                                                {
+                                                    "name": "Tanh",
+                                                    "value": "tanh"
+                                                },
+                                                {
+                                                    "name": "ReLU",
+                                                    "value": "relu"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "name": "af_ae",
+                                            "label": "Activation function autoencoder",
+                                            "default": "relu",
+                                            "type": "select",
+                                            "options": [
+                                                {
+                                                    "name": "None",
+                                                    "value": "none"
+                                                },
+                                                {
+                                                    "name": "Sigmoid",
+                                                    "value": "sigmoid"
+                                                },
+                                                {
+                                                    "name": "Tanh",
+                                                    "value": "tanh"
+                                                },
+                                                {
+                                                    "name": "ReLU",
+                                                    "value": "relu"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
                 },
                 {
                     "name": "Predict",
-                    "value": "p"
+                    "value": "p",
+                    "fields": [
+                        {
+                            "name": "datafile_id",
+                            "label": "Data file ID",
+                            "placeholder": "(Please see documentation)",
+                            "type": "input"
+                        },
+                        {
+                            "name": "build_id",
+                            "label": "Build ID",
+                            "placeholder": "(Please see documentation)",
+                            "type": "input"
+                        }
+                    ]
                 },
                 {
                     "name": "Only Visualize",
-                    "value": "v"
-                }
-            ]
-        },
-        {
-            "name": "datafile_id",
-            "label": "Data file ID",
-            "placeholder": "(Please see documentation)",
-            "type": "input"
-        },
-        {
-            "name": "build_id",
-            "label": "Build ID",
-            "placeholder": "(Please see documentation)",
-            "type": "input"
-        },
-        {
-            "name": "horizon",
-            "label": "Horizon",
-            "default": 12,
-            "type": "input-number"
-        },
-        {
-            "name": "dropout",
-            "label": "Dropout",
-            "default": 0.2,
-            "type": "input-number"
-        },
-        {
-            "name": "skip_rnn",
-            "label": "RNN-skip units",
-            "default": 24,
-            "type": "input-number"
-        },
-        {
-            "name": "preset",
-            "label": "Param preset",
-            "default": "p1",
-            "type": "select",
-            "options": [
-                {
-                    "name": "Preset1",
-                    "value": "p1"
-                },
-                {
-                    "name": "Preset2",
-                    "value": "p2"
-                },
-                {
-                    "name": "Manual-mode",
-                    "value": "m"
-                }
-            ]
-        },
-        {
-            "name": "epoch",
-            "label": "Epochs",
-            "placeholder": "(Only in manual-mode)",
-            "type": "input-number"
-        },
-        {
-            "name": "hid_cnn",
-            "label": "Autoencoder CNN hidden units",
-            "placeholder": "(Only in manual-mode)",
-            "type": "input-number"
-        },
-        {
-            "name": "hid_rnn",
-            "label": "RNN hidden units",
-            "placeholder": "(Only in manual-mode)",
-            "type": "input-number"
-        },
-        {
-            "name": "hid_skip_rnn",
-            "label": "RNN-skip hidden units",
-            "placeholder": "(Only in manual-mode)",
-            "type": "input-number"
-        },
-        {
-            "name": "window_rnn",
-            "label": "RNN window size",
-            "placeholder": "(Only in manual-mode)",
-            "type": "input-number"
-        },
-        {
-            "name": "windows_hw",
-            "label": "Highway window",
-            "placeholder": "(Only in manual-mode)",
-            "type": "input-number"
-        },
-        {
-            "name": "af_output",
-            "label": "Activation function output",
-            "default": "sigmoid",
-            "type": "select",
-            "options": [
-                {
-                    "name": "None",
-                    "value": "none"
-                },
-                {
-                    "name": "Sigmoid",
-                    "value": "sigmoid"
-                },
-                {
-                    "name": "Tanh",
-                    "value": "tanh"
-                },
-                {
-                    "name": "ReLU",
-                    "value": "relu"
-                }
-            ]
-        },
-        {
-            "name": "af_ae",
-            "label": "Activation function autoencoder",
-            "default": "relu",
-            "type": "select",
-            "options": [
-                {
-                    "name": "None",
-                    "value": "none"
-                },
-                {
-                    "name": "Sigmoid",
-                    "value": "sigmoid"
-                },
-                {
-                    "name": "Tanh",
-                    "value": "tanh"
-                },
-                {
-                    "name": "ReLU",
-                    "value": "relu"
+                    "value": "v",
+                    "fields": [
+                        {
+                            "name": "datafile_id",
+                            "label": "Data file ID",
+                            "placeholder": "(Please see documentation)",
+                            "type": "input"
+                        }
+                    ]
                 }
             ]
         }
     ],
     "developer_fields": [
         {
-            "name": "preset",
-            "label": "Param preset",
-            "default": "p1",
-            "type": "select",
-            "options": [
-                {
-                    "name": "Preset1",
-                    "value": "p1"
-                },
-                {
-                    "name": "Preset2",
-                    "value": "p2"
-                }
-            ]
+            "name": "none",
+            "label": "Please use User Mode",
+            "placeholder": "Please use User Mode",
+            "type": "input"
         }
     ]
 }
