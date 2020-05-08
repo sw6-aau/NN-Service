@@ -74,16 +74,15 @@ def TimeSeriesToCsv(timeSeriesData):
     saveFile.close()
 
     readFile = open("private/data/tsTo.csv", "r")
-    print(readFile.read())
-    return readFile
+    return readFile.read()
 
 # ===============
 
 # aSTEP-time-series format to chart.js graph
-def TimeSeriesToChartJs(timeSeriesData, chartType):
+def TimeSeriesToChartJs(timeSeriesData, chartType, tabName):
     chartObj = {
         "chart_type": "time-series-data",
-        "name": "Static: " + timeSeriesData["dataSetName"],
+        "name": "Static: " + timeSeriesData["dataSetName"] + " (" + tabName + ")",
         "content": {
             "settings": {
                 "to_chart": "chart-js",

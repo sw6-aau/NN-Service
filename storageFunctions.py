@@ -79,9 +79,9 @@ def DownloadFromGCP(fileName):
     if not ValidateFileName(fileName):
         return False
     urls = GetJsonFromPrivate("noGithub", "productionData.json")
-    url = urls["downloadURL"] + str(fileName) + ".predict"
-    wget.download(url, "private/data/" + str(fileName) + ".predict")
-    return open("private/data/" + str(fileName) + ".predict", "r")
+    url = urls["downloadURL"] + str(fileName)
+    wget.download(url, "private/data/" + str(fileName))
+    return open("private/data/" + str(fileName), "r")
 
 # Used for testing purposes
 def MockUploadToGCP(fileData):

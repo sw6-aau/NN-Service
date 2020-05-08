@@ -1,9 +1,10 @@
 import requests
 import re
 import uuid
+import json
 from storageFunctions import UploadToGCP, DownloadFromGCP, GetJsonFromPublic, GetJsonFromPrivate, GetTextFromPublic
 from validationFunctions import ValidateNumber, ValidateNumNotNegative, ValidateStringNoSymbol, IsEmptyString, ValidateParamFile
-from converterFunctions import CsvToTimeSeries, TimeSeriesToChartJs, TimeSeriesToGenericTsGraph
+from converterFunctions import CsvToTimeSeries, TimeSeriesToChartJs, TimeSeriesToGenericTsGraph, TimeSeriesToCsv
 
 noGithub = GetJsonFromPrivate("noGithub", "productionData.json")
 errorChart = GetJsonFromPublic("api", "errorChart.json")
@@ -89,15 +90,18 @@ def HandleRenderPost(args):
     if args["option"] == "v":
         if IsEmptyString(args["datafile_id"]):
             return ReturnErrorResponse("No data file ID entered for visualization")
-        data = DownloadFromGCP(args["datafile_id"])
+        data = DownloadFromGCP(args["datafile_id"] + ".predict")
     else:
-        data = DownloadFromGCP(args["build_id"])
+        data = DownloadFromGCP(args["build_id"] + ".predict")
 
     # Make all the charts needed to display
     aSTEPDataOuptput = CsvToTimeSeries(data, "Data Set")
     chartTimeSeries = TimeSeriesToGenericTsGraph(originalFile, aSTEPDataOuptput, 20)
-    chartJs = TimeSeriesToChartJs(aSTEPDataOuptput, "line")
+    originalChartJs = TimeSeriesToChartJs(originalFile, "line", "Input")
+    predictChartJs = TimeSeriesToChartJs(aSTEPDataOuptput, "line", "Predict")
     buildIDChart = MakeBuildIDChart(args["build_id"], args["datafile_id"])
+    outputDataAstep = MakeDataChart("Output - RFC0016", str(json.dumps(aSTEPDataOuptput, indent=4)))
+    outputDataCsv = MakeDataChart("Output - CSV", str(TimeSeriesToCsv(aSTEPDataOuptput)))
 
     return {
         "chart_type": "composite-scroll",
@@ -105,7 +109,7 @@ def HandleRenderPost(args):
             buildIDChart,
             {
                 "chart_type": "composite",
-                "content": [chartTimeSeries, chartJs]
+                "content": [chartTimeSeries, originalChartJs, predictChartJs, outputDataAstep, outputDataCsv]
             }
         ]
     }
@@ -152,6 +156,14 @@ def MakeBuildIDChart(buildID, datafileID):
     return {
         "chart_type": "text",
         "content": "<div style='color: white; text-align: center; background-color: #000000; padding: 2px'><p style='margin: 0; padding: 5px;'>Build ID: <i>" + str(buildID) + "</i></p><pstyle='margin: 0; padding: 5px;'>Data File ID: <i>" + str(datafileID) + "</i></p><div>" 
+    }
+
+# Make a data chart to display raw data to users
+def MakeDataChart(name, data):
+    return {
+        "chart_type": "text",
+        "name": name,
+        "content": "<div style='width: 95%; height: 70vh; margin: 2.5%'><textarea style='width: 100%; height: 100%; margin: 0'>" + data + "</textarea></div>"
     }
 
 # Takes an array of args, and returns a HTML param string
