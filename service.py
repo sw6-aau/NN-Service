@@ -3,9 +3,8 @@ import time
 from flask import Flask, send_file, request, Response
 from flask_restful import Resource, Api, reqparse
 from flask_cors import CORS
-from storageFunctions import ValidateFileExist, ValidateFileName, WriteToPublic, GetTextFromPublic, GetJsonFromPublic, GetFileNamesInFolder
+from storageFunctions import ValidateFileExist, ValidateFileName, WriteToPublic, GetTextFromPublic, GetJsonFromPublic, GetJsonFromPrivate, GetFileNamesInFolder
 from backendFunctions import HandleRenderPost, HandleData
-from validationFunctions import ValidateStringNoSymbol
 
 # Setup
 app = Flask(__name__)
@@ -84,11 +83,12 @@ class StorageAdd(Resource):
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument("fileName")
+        parser.add_argument("key")
         args = parser.parse_args()
         fileData = request.files['fileData']
 
-        if not ValidateFileName(args["fileName"]):
-            return "Invalid request!", 404
+        if not ValidateFileName(args["fileName"]) or not CheckAPIKey(args["key"]):
+            return "Invalid request/key!", 404
         else:
             return WriteToPublic("storage", fileData, args["fileName"])
 
@@ -97,10 +97,11 @@ class StorageGet(Resource):
     def get(self):
         parser = reqparse.RequestParser()
         parser.add_argument("fileName")
+        parser.add_argument("key")
         args = parser.parse_args()
 
-        if not ValidateFileName(args["fileName"]) or not ValidateFileExist("storage", args["fileName"], "public/"):
-           return "Invalid request!", 404
+        if not ValidateFileName(args["fileName"]) or not ValidateFileExist("storage", args["fileName"], "public/") or not CheckAPIKey(args["key"]):
+           return "Invalid request/key!", 404
         else:
             try:
                 return send_file("public/storage/" + args["fileName"], attachment_filename=args["fileName"])
@@ -110,7 +111,25 @@ class StorageGet(Resource):
 # The "/storage/get-all-names" endpoint
 class StorageGetAllNames(Resource):
     def get(self):
-        return GetFileNamesInFolder("storage")
+        parser = reqparse.RequestParser()
+        parser.add_argument("key")
+        args = parser.parse_args()
+
+        if CheckAPIKey(args["key"]):
+            return GetFileNamesInFolder("storage")
+        else:
+            return "Invalid key!", 404
+
+# Check API key
+def CheckAPIKey(key):
+    if key == None:
+        return False
+    privateData = GetJsonFromPrivate("noGithub", "productionData.json")
+    apiKey = privateData["apiKey"] 
+    if str(key) == str(apiKey):
+        return True
+    else:
+        return False
 
 # The "/combined" endpoint
 class Combined(Resource):
