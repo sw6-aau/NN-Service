@@ -41,6 +41,7 @@ echo -e "\n\e[38;5;4m-===TEST '/storage/get-all-names'===-\n\e[0m"
 curl -X GET http://localhost:5000/storage/get-all-names?key=$apiKey
 
 echo -e "\n\e[38;5;4m-===TEST '/combined'===-\n\e[0m"
-curl -X POST http://localhost:5000/combined
+echo -e "\e[38;5;8m(Is expecting data via the form, so please test via aSTEP website)\e[0m\n"
+#curl -X POST http://localhost:5000/combined
 
 echo -e "\n\e[38;5;2m-===DONE===-\e[0m"
