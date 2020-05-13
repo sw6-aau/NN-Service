@@ -11,6 +11,78 @@
                     "value": "tp",
                     "fields": [
                         {
+                            "name": "train_settings",
+                            "label": "Data: Training",
+                            "default": "csv",
+                            "type": "formset-select",
+                            "options": [
+                                {
+                                    "name": "Input data: CSV",
+                                    "value": "csv",
+                                    "fields": []
+                                },
+                                {
+                                    "name": "Input data: RFC0016",
+                                    "value": "rfc",
+                                    "fields": []
+                                },
+                                {
+                                    "name": "Previously uploaded",
+                                    "value": "prev",
+                                    "fields": [
+                                        {
+                                            "name": "build_id",
+                                            "label": "Build ID",
+                                            "placeholder": "Please enter ID",
+                                            "type": "input"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "name": "file_settings",
+                            "label": "Data: Predict",
+                            "default": "csv",
+                            "type": "formset-select",
+                            "options": [
+                                {
+                                    "name": "Upload: CSV",
+                                    "value": "csv",
+                                    "fields": [
+                                        {
+                                            "name": "data-file",
+                                            "label": "Upload data file",
+                                            "type": "file"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "Upload: RFC0016",
+                                    "value": "rfc",
+                                    "fields": [
+                                        {
+                                            "name": "data-file",
+                                            "label": "Upload data file",
+                                            "type": "file"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "Previously uploaded",
+                                    "value": "prev",
+                                    "fields": [
+                                        {
+                                            "name": "datafile_id",
+                                            "label": "Data file ID",
+                                            "placeholder": "(Please enter ID)",
+                                            "type": "input"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
                             "name": "epoch",
                             "label": "Epochs",
                             "default": 10,
@@ -82,6 +154,78 @@
                     "name": "Train",
                     "value": "t",
                     "fields": [
+                        {
+                            "name": "train_settings",
+                            "label": "Data: Training",
+                            "default": "csv",
+                            "type": "formset-select",
+                            "options": [
+                                {
+                                    "name": "Input data: CSV",
+                                    "value": "csv",
+                                    "fields": []
+                                },
+                                {
+                                    "name": "Input data: RFC0016",
+                                    "value": "rfc",
+                                    "fields": []
+                                },
+                                {
+                                    "name": "Previously uploaded",
+                                    "value": "prev",
+                                    "fields": [
+                                        {
+                                            "name": "build_id",
+                                            "label": "Build ID",
+                                            "placeholder": "Please enter ID",
+                                            "type": "input"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "name": "file_settings",
+                            "label": "Data: Predict",
+                            "default": "csv",
+                            "type": "formset-select",
+                            "options": [
+                                {
+                                    "name": "Upload: CSV",
+                                    "value": "csv",
+                                    "fields": [
+                                        {
+                                            "name": "data-file",
+                                            "label": "Upload data file",
+                                            "type": "file"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "Upload: RFC0016",
+                                    "value": "rfc",
+                                    "fields": [
+                                        {
+                                            "name": "data-file",
+                                            "label": "Upload data file",
+                                            "type": "file"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "Previously uploaded",
+                                    "value": "prev",
+                                    "fields": [
+                                        {
+                                            "name": "datafile_id",
+                                            "label": "Data file ID",
+                                            "placeholder": "(Please enter ID)",
+                                            "type": "input"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
                         {
                             "name": "epoch",
                             "label": "Epochs",
@@ -155,27 +299,87 @@
                     "value": "p",
                     "fields": [
                         {
-                            "name": "datafile_id",
-                            "label": "Data file ID",
-                            "placeholder": "(Please see documentation)",
+                            "name": "build_id",
+                            "label": "Build ID",
+                            "placeholder": "Please enter ID",
                             "type": "input"
                         },
                         {
-                            "name": "build_id",
-                            "label": "Build ID",
-                            "placeholder": "(Please see documentation)",
-                            "type": "input"
+                            "name": "file_settings",
+                            "label": "Data: Predict",
+                            "default": "csv",
+                            "type": "formset-select",
+                            "options": [
+                                {
+                                    "name": "Input data: CSV",
+                                    "value": "csv",
+                                    "fields": []
+                                },
+                                {
+                                    "name": "Input data: RFC0016",
+                                    "value": "rfc",
+                                    "fields": []
+                                },
+                                {
+                                    "name": "Previously uploaded",
+                                    "value": "prev",
+                                    "fields": [
+                                        {
+                                            "name": "datafile_id",
+                                            "label": "Data file ID",
+                                            "placeholder": "(Please enter ID)",
+                                            "type": "input"
+                                        }
+                                    ]
+                                }
+                            ]
                         }
                     ]
-                },
+                },  
                 {
                     "name": "Only Visualize",
                     "value": "v",
                     "fields": [
                         {
+                            "name": "file_settings",
+                            "label": "Data to visualize",
+                            "default": "prev",
+                            "type": "formset-select",
+                            "options": [
+                                {
+                                    "name": "Previous result",
+                                    "value": "prev",
+                                    "fields": [
+                                        {
+                                            "name": "datafile_id",
+                                            "label": "Data file ID",
+                                            "placeholder": "(Please enter ID)",
+                                            "type": "input"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "Input data: CSV",
+                                    "value": "csv",
+                                    "fields": []
+                                },
+                                {
+                                    "name": "Input data: RFC0016",
+                                    "value": "rfc",
+                                    "fields": []
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "Print Raw Results",
+                    "value": "print",
+                    "fields": [
+                        {
                             "name": "datafile_id",
                             "label": "Data file ID",
-                            "placeholder": "(Please see documentation)",
+                            "placeholder": "(Please enter ID)",
                             "type": "input"
                         }
                     ]

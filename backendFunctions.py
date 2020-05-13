@@ -39,22 +39,14 @@ def HandleRenderPost(args):
 
     # If no build_id is entered then generate one
     if IsEmptyString(args["build_id"]):
-        if args["option"] == "tp" or args["option"] == "t":
-            if not ValidateParamFile(args["data-input"]):
-                return ReturnErrorResponse("No file has been uploaded, when it is expected")
-            args["build_id"] = re.sub("[^0-9a-zA-Z_\- ]", "", str(uuid.uuid4()))
-        elif args["option"] == "p":
-            return ReturnErrorResponse("You need a build ID if you are predicting")
+        if args["preset"] == "p" and IsEmptyString(args["build_id"]):
+            return ReturnErrorResponse("No build ID entered")
+        args["build_id"] = re.sub("[^0-9a-zA-Z_\- ]", "", str(uuid.uuid4()))
 
-    # Upload file, if training is selected
-    if args["option"] == "tp" or args["option"] == "t":
-        uploadID = UploadToGCP(args["data-input"], args["build_id"])
-        args["datafile_id"] = uploadID
-
-    # Download orgiginal file if visualize or predict mode, or if using datafile
-    if args["option"] == "p" or args["option"] == "v":
-        if IsEmptyString(args["datafile_id"]):
-            return ReturnErrorResponse("No datafile ID has been set")
+    # Upload files to GCP
+    args = HandleUploadToCGP(args)
+    if type(args) == str:
+        return ReturnErrorResponse(args)
 
     # Save orginal file as in time series format
     originalFile = CsvToTimeSeries(DownloadFromGCP(args["datafile_id"]), "data set")
@@ -63,7 +55,6 @@ def HandleRenderPost(args):
     if args["option"] == "tp" or args["option"] == "t":
         trainParams = MakeTrainParams(args)
         url = str(noGithub["trainURL"]) + str(ConvertArgsToParams(trainParams))
-        print(url)
         trainReq = requests.get(url)
         trainID = re.sub("[^0-9a-zA-Z_\- ]", "", trainReq.text)
 
@@ -80,19 +71,25 @@ def HandleRenderPost(args):
             return ReturnErrorResponse("No build ID entered for prediction")
         predictParams = MakePredictParams(args)
         url = str(noGithub["predictURL"]) + str(ConvertArgsToParams(predictParams))
-        print(url)
         predictReq = requests.get(url)
         predictID = re.sub("[^0-9a-zA-Z_\- ]", '', predictReq.text)
         if not ValidateStringNoSymbol(predictID):
             return ReturnErrorResponse("Failed in predict stage: Invalid predictID")
         if not str(predictID) == str(args["build_id"]):
-            return ReturnErrorResponse("Failed in predict stage: Incorrect match of IDs" + str(predictID) + " != " + str(args["build_id"]))
+            return ReturnErrorResponse("Failed in predict stage: Incorrect match of IDs '" + str(predictID) + "' != '" + str(args["build_id"]) + "'")
 
     # Download datafile from GCP
     if args["option"] == "v":
         if IsEmptyString(args["datafile_id"]):
             return ReturnErrorResponse("No data file ID entered for visualization")
-        data = DownloadFromGCP(args["datafile_id"] + ".predict")
+        if args["file_settings"] == "prev":
+            data = DownloadFromGCP(args["datafile_id"] + ".predict")
+        else:
+            data = DownloadFromGCP(args["datafile_id"])
+    elif args["option"] == "print":
+        if IsEmptyString(args["datafile_id"]):
+            return ReturnErrorResponse("No data file ID entered for printing data ('Visualize Results' version)")
+        data = DownloadFromGCP(args["datafile_id"])
     else:
         data = DownloadFromGCP(args["build_id"] + ".predict")
 
@@ -115,6 +112,50 @@ def HandleRenderPost(args):
             }
         ]
     }
+
+# Handles file uploads to GCP, based upon the many options
+# Returns updated version of args
+def HandleUploadToCGP(args):
+    newArgs = args
+
+    # Upon train and predict, and train
+    if newArgs["option"] == "tp" or newArgs["option"] == "t":
+        # Train data:
+        newArgs = UploadBasedOnSettings(args["train_settings"], newArgs["data-input"], args)
+        if type(newArgs) == str:
+            return newArgs
+        # Predict data:
+        newArgs = UploadBasedOnSettings(args["file_settings"], newArgs["data-file"], args)
+        return newArgs
+
+    # Upon visualize or predict
+    if newArgs["option"] == "v" or newArgs["option"] == "p":
+        newArgs = UploadBasedOnSettings(args["file_settings"], newArgs["data-input"], args)
+        return newArgs
+
+# Upload a file based upon "prev", "csv", or "rfc" setting
+def UploadBasedOnSettings(setting, fileToUpload, args):
+    newArgs = args
+
+    if setting == "prev":
+        if IsEmptyString(newArgs["datafile_id"]):
+            return "No file ID entered!"
+        else:
+            return newArgs # as datafile_id is already set
+    elif setting == "csv":
+        uploadID = UploadToGCP(fileToUpload, newArgs["build_id"])
+        newArgs["datafile_id"] = uploadID
+    elif setting == "rfc":
+        tempID = re.sub("[^0-9a-zA-Z_\- ]", "", str(uuid.uuid4()))
+        tempUploadID = UploadToGCP(fileToUpload.stream.read(), tempID)
+        tempFile = DownloadFromGCP(tempID)
+        data = TimeSeriesToCsv(json.loads(tempFile.read()))
+        uploadID = UploadToGCP(data, newArgs["build_id"])
+        newArgs["datafile_id"] = uploadID
+    else:
+        return "Invalid file setting!"
+
+    return newArgs
 
 # Take out the params needed for /train
 def MakeTrainParams(args):
@@ -181,6 +222,8 @@ def ValidationOfRenderArgs(args):
     checks.append(ValidateStringNoSymbol(args["option"]))
 
     if args["option"] == "tp" or args["option"] == "t":
+        checks.append(ValidateStringNoSymbol(args["train_settings"]))
+        checks.append(ValidateStringNoSymbol(args["file_settings"]))
         checks.append(ValidateRenderNumber(args["epoch"]))
         checks.append(ValidateStringNoSymbol(args["preset"]))
         # Only check rest if manual-mode is chosen
@@ -197,10 +240,15 @@ def ValidationOfRenderArgs(args):
             checks.append(ValidateRenderNumber(args["windows_hw"]))
 
     if args["option"] == "p":
+        checks.append(ValidateStringNoSymbol(args["file_settings"]))
         checks.append(ValidateStringNoSymbol(args["datafile_id"]))
         checks.append(ValidateStringNoSymbol(args["build_id"]))
 
     if args["option"] == "v":
+        checks.append(ValidateStringNoSymbol(args["file_settings"]))
+        checks.append(ValidateStringNoSymbol(args["datafile_id"]))
+
+    if args["option"] == "print":
         checks.append(ValidateStringNoSymbol(args["datafile_id"]))
 
     # Check if any validation failed
@@ -221,7 +269,7 @@ def ValidateRenderNumber(arg):
 # Handle request for data from /data
 def HandleData(args):
     if IsEmptyString(args["datafile_id"]):
-        return "No datafile ID entered to get data from! Please enter valid buildID or generate one via the 'Visualize Results' option. (TIP: Switch to 'Only visualize' mode)'"
+        return "No datafile ID entered to get data from! Please enter valid dataID 'Print Raw Data' option in 'What do you wish to do?'."
     elif not ValidateStringNoSymbol(args["datafile_id"]):
         return "Invalid datafile ID!"
     else:
