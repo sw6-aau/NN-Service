@@ -1,6 +1,6 @@
 {
-    "id": "AECLSTNet",
-    "name": "AECLSTNet: Predictions",
+    "id": "LSTNet",
+    "name": "LSTNet: Predictions",
     "version": "2020v1",
     "category": 2,
     "input": [
