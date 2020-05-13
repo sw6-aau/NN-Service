@@ -13,7 +13,7 @@
                         {
                             "name": "epoch",
                             "label": "Epochs",
-                            "default": 4,
+                            "default": 10,
                             "type": "input-number"
                         },
                         {
@@ -49,12 +49,6 @@
                                             "type": "input-number"
                                         },
                                         {
-                                            "name": "skip_rnn",
-                                            "label": "RNN-skip units",
-                                            "placeholder": "(Only in manual-mode)",
-                                            "type": "input-number"
-                                        },
-                                        {
                                             "name": "hid_cnn",
                                             "label": "Autoencoder CNN hidden units",
                                             "placeholder": "(Only in manual-mode)",
@@ -63,12 +57,6 @@
                                         {
                                             "name": "hid_rnn",
                                             "label": "RNN hidden units",
-                                            "placeholder": "(Only in manual-mode)",
-                                            "type": "input-number"
-                                        },
-                                        {
-                                            "name": "hid_skip_rnn",
-                                            "label": "RNN-skip hidden units",
                                             "placeholder": "(Only in manual-mode)",
                                             "type": "input-number"
                                         },
@@ -83,54 +71,6 @@
                                             "label": "Highway window",
                                             "placeholder": "(Only in manual-mode)",
                                             "type": "input-number"
-                                        },
-                                        {
-                                            "name": "af_output",
-                                            "label": "Activation function output",
-                                            "default": "sigmoid",
-                                            "type": "select",
-                                            "options": [
-                                                {
-                                                    "name": "None",
-                                                    "value": "none"
-                                                },
-                                                {
-                                                    "name": "Sigmoid",
-                                                    "value": "sigmoid"
-                                                },
-                                                {
-                                                    "name": "Tanh",
-                                                    "value": "tanh"
-                                                },
-                                                {
-                                                    "name": "ReLU",
-                                                    "value": "relu"
-                                                }
-                                            ]
-                                        },
-                                        {
-                                            "name": "af_ae",
-                                            "label": "Activation function autoencoder",
-                                            "default": "relu",
-                                            "type": "select",
-                                            "options": [
-                                                {
-                                                    "name": "None",
-                                                    "value": "none"
-                                                },
-                                                {
-                                                    "name": "Sigmoid",
-                                                    "value": "sigmoid"
-                                                },
-                                                {
-                                                    "name": "Tanh",
-                                                    "value": "tanh"
-                                                },
-                                                {
-                                                    "name": "ReLU",
-                                                    "value": "relu"
-                                                }
-                                            ]
                                         }
                                     ]
                                 }
@@ -145,7 +85,7 @@
                         {
                             "name": "epoch",
                             "label": "Epochs",
-                            "default": 4,
+                            "default": 10,
                             "type": "input-number"
                         },
                         {
@@ -181,12 +121,6 @@
                                             "type": "input-number"
                                         },
                                         {
-                                            "name": "skip_rnn",
-                                            "label": "RNN-skip units",
-                                            "placeholder": "(Only in manual-mode)",
-                                            "type": "input-number"
-                                        },
-                                        {
                                             "name": "hid_cnn",
                                             "label": "Autoencoder CNN hidden units",
                                             "placeholder": "(Only in manual-mode)",
@@ -195,12 +129,6 @@
                                         {
                                             "name": "hid_rnn",
                                             "label": "RNN hidden units",
-                                            "placeholder": "(Only in manual-mode)",
-                                            "type": "input-number"
-                                        },
-                                        {
-                                            "name": "hid_skip_rnn",
-                                            "label": "RNN-skip hidden units",
                                             "placeholder": "(Only in manual-mode)",
                                             "type": "input-number"
                                         },
@@ -215,54 +143,6 @@
                                             "label": "Highway window",
                                             "placeholder": "(Only in manual-mode)",
                                             "type": "input-number"
-                                        },
-                                        {
-                                            "name": "af_output",
-                                            "label": "Activation function output",
-                                            "default": "sigmoid",
-                                            "type": "select",
-                                            "options": [
-                                                {
-                                                    "name": "None",
-                                                    "value": "none"
-                                                },
-                                                {
-                                                    "name": "Sigmoid",
-                                                    "value": "sigmoid"
-                                                },
-                                                {
-                                                    "name": "Tanh",
-                                                    "value": "tanh"
-                                                },
-                                                {
-                                                    "name": "ReLU",
-                                                    "value": "relu"
-                                                }
-                                            ]
-                                        },
-                                        {
-                                            "name": "af_ae",
-                                            "label": "Activation function autoencoder",
-                                            "default": "relu",
-                                            "type": "select",
-                                            "options": [
-                                                {
-                                                    "name": "None",
-                                                    "value": "none"
-                                                },
-                                                {
-                                                    "name": "Sigmoid",
-                                                    "value": "sigmoid"
-                                                },
-                                                {
-                                                    "name": "Tanh",
-                                                    "value": "tanh"
-                                                },
-                                                {
-                                                    "name": "ReLU",
-                                                    "value": "relu"
-                                                }
-                                            ]
                                         }
                                     ]
                                 }

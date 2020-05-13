@@ -63,6 +63,7 @@ def HandleRenderPost(args):
     if args["option"] == "tp" or args["option"] == "t":
         trainParams = MakeTrainParams(args)
         url = str(noGithub["trainURL"]) + str(ConvertArgsToParams(trainParams))
+        print(url)
         trainReq = requests.get(url)
         trainID = re.sub("[^0-9a-zA-Z_\- ]", "", trainReq.text)
 
@@ -79,6 +80,7 @@ def HandleRenderPost(args):
             return ReturnErrorResponse("No build ID entered for prediction")
         predictParams = MakePredictParams(args)
         url = str(noGithub["predictURL"]) + str(ConvertArgsToParams(predictParams))
+        print(url)
         predictReq = requests.get(url)
         predictID = re.sub("[^0-9a-zA-Z_\- ]", '', predictReq.text)
         if not ValidateStringNoSymbol(predictID):
@@ -120,7 +122,6 @@ def MakeTrainParams(args):
     trainParams["build_id"] = args["build_id"]
     trainParams["horizon"] = args["horizon"]
     trainParams["dropout"] = args["dropout"]
-    trainParams["skip_rnn"] = args["skip_rnn"]
     trainParams["epoch"] = args["epoch"]
     trainParams["hid_cnn"] = args["hid_cnn"]
     trainParams["hid_rnn"] = args["hid_rnn"]
@@ -141,14 +142,10 @@ def FillPresetValues(args, presetName):
     presetArr = preset[presetName]
     args["horizon"] = presetArr[0]
     args["dropout"] = presetArr[1]
-    args["skip_rnn"] = presetArr[2]
-    args["hid_cnn"] = presetArr[3]
-    args["hid_rnn"] = presetArr[4]
-    args["hid_skip_rnn"] = presetArr[5]
-    args["window_rnn"] = presetArr[6]
-    args["windows_hw"] = presetArr[7]
-    args["af_output"] = presetArr[8]
-    args["af_ae"] = presetArr[9]
+    args["hid_cnn"] = presetArr[2]
+    args["hid_rnn"] = presetArr[3]
+    args["window_rnn"] = presetArr[4]
+    args["windows_hw"] = presetArr[5]
     return args
 
 # Make a build ID HTML chart
@@ -194,14 +191,10 @@ def ValidationOfRenderArgs(args):
             if ValidateRenderNumber(args["dropout"]) and float(args["dropout"]) > 1:
                     print("ERROR: Argument '" + args["dropout"] +"' failed validation, as n > 1")
                     checks.append(False)
-            checks.append(ValidateRenderNumber(args["skip_rnn"]))
             checks.append(ValidateRenderNumber(args["hid_cnn"]))
             checks.append(ValidateRenderNumber(args["hid_rnn"]))
-            checks.append(ValidateRenderNumber(args["hid_skip_rnn"]))
             checks.append(ValidateRenderNumber(args["window_rnn"]))
             checks.append(ValidateRenderNumber(args["windows_hw"]))
-            checks.append(ValidateStringNoSymbol(args["af_output"]))
-            checks.append(ValidateStringNoSymbol(args["af_ae"]))
 
     if args["option"] == "p":
         checks.append(ValidateStringNoSymbol(args["datafile_id"]))
