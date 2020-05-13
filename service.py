@@ -1,5 +1,4 @@
 import werkzeug
-import time
 from flask import Flask, send_file, request, Response
 from flask_restful import Resource, Api, reqparse
 from flask_cors import CORS
@@ -133,7 +132,30 @@ def CheckAPIKey(key):
 # The "/combined" endpoint
 class Combined(Resource):
     def post(self):
-        return "Hello from combined"
+        parser = reqparse.RequestParser()
+        parser.add_argument("data-input", type=werkzeug.datastructures.FileStorage, location='files')
+        parser.add_argument("option")
+        parser.add_argument("datafile_id")
+        parser.add_argument("build_id")
+        parser.add_argument("horizon")
+        parser.add_argument("dropout")
+        parser.add_argument("skip_rnn")
+        parser.add_argument("preset")
+        parser.add_argument("epoch")
+        parser.add_argument("hid_cnn")
+        parser.add_argument("hid_rnn")
+        parser.add_argument("hid_skip_rnn")
+        parser.add_argument("window_rnn")
+        parser.add_argument("windows_hw")
+        parser.add_argument("af_output")
+        parser.add_argument("af_ae")
+        args = parser.parse_args()
+        renderHTML = HandleRenderPost(args)
+
+        return {
+            "data": HandleData(args),
+            "render": renderHTML
+        }
 
 # Endpoints
 api.add_resource(Root, "/")
@@ -149,4 +171,4 @@ api.add_resource(Combined, "/combined")
 
 # Start connection
 if __name__ == "__main__":
-    app.run(threaded=True, debug=True, port="5000", host="0.0.0.0")
+    app.run(threaded=True, debug=False, port="5000", host="0.0.0.0")
