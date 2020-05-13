@@ -32,20 +32,19 @@ class Readme(Resource):
         return {
             "chart_type": "composite-scroll",
             "content": [
-            {
-                "chart_type": "text",
-                "content": "<div style='color: white; text-align: center; background-color: #cc7416; padding: 2px'><h1 style='position: relative; top: 20px;'>! IMPORTANT !</h1><p style='margin: 20px;'>Training and prediction will be done on a server, so it will take some time to get a result.</p></div>"
-            },
-            {
-                "chart_type": "markdown",
-                "content": GetTextFromPublic("api", "documentation.md")
-            }
+                {
+                    "chart_type": "text",
+                    "content": "<div style='color: white; text-align: center; background-color: #cc7416; padding: 2px'><h1 style='position: relative; top: 20px;'>! IMPORTANT !</h1><p style='margin: 20px;'>Training and prediction will be done on a server, so it will take some time to get a result.</p></div>"
+                },
+                {
+                    "chart_type": "markdown",
+                    "content": GetTextFromPublic("api", "documentation.md")
+                }
             ]
         }
 
 # The "/render" endpoint
 class Render(Resource):
-    # Note: This is the request the front-end sends
     def post(self):
         # Parse request and save to dictionary
         parser = reqparse.RequestParser()
@@ -74,7 +73,7 @@ class Render(Resource):
 class Data(Resource):
     def post(self):
         parser = reqparse.RequestParser()
-        parser.add_argument("build_id")
+        parser.add_argument("datafile_id")
         args = parser.parse_args()
         return HandleData(args)
 
@@ -106,7 +105,7 @@ class StorageGet(Resource):
             try:
                 return send_file("public/storage/" + args["fileName"], attachment_filename=args["fileName"])
             except Exception as e:
-                return str(e)
+                return str(e), 404
 
 # The "/storage/get-all-names" endpoint
 class StorageGetAllNames(Resource):

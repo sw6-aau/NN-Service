@@ -53,15 +53,12 @@ def ValidateStringNoSymbol(string):
 
 # Ensure not able to access folders below intended folder and has valid chars
 def ValidateRelativePath(relativePath):
-    # No need to check if nothing
     if str(relativePath) == "":
         return True
     
-    # Do regex to figure check
     backPath = re.search("\.\.", str(relativePath))
     notAllowedChars = re.search("[^\w\.\/-]", str(relativePath))
 
-    # Decide what to do
     if backPath == None and notAllowedChars == None:
         return True
     else:
@@ -74,7 +71,6 @@ def ValidateFileName(filename):
 
 # Validate file exists
 def ValidateFileExist(relativePath, filename, localFolder):
-    # First validate the input params
     if not ValidateRelativePath(relativePath) or not ValidateFileName(filename):
         return False
 
