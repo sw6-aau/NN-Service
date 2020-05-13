@@ -18,7 +18,7 @@ def ReturnErrorResponse(reason):
             errorChart,
             {
                 "chart_type": "text",
-                "content": "<div style='color: white; text-align: center; background-color: #630a0f;'><p style='margin: 0; padding: 5px;'>Reason: <i>" + str(reason) + "</i></p><div>" 
+                "content": "<div style='color: white; text-align: center; background-color: #630a0f;'><p style='margin: 0; padding: 5px;'>Reason: <i>" + str(reason) + "</i></p><div>"
             },
             {
                 "chart_type": "markdown",
@@ -55,8 +55,8 @@ def HandleRenderPost(args):
     if args["option"] == "p" or args["option"] == "v":
         if IsEmptyString(args["datafile_id"]):
             return ReturnErrorResponse("No datafile ID has been set")
-    
-    # Save orginal file
+
+    # Save orginal file as in time series format
     originalFile = CsvToTimeSeries(DownloadFromGCP(args["datafile_id"]), "data set")
 
     # Train if desired by user
@@ -65,7 +65,7 @@ def HandleRenderPost(args):
         url = str(noGithub["trainURL"]) + str(ConvertArgsToParams(trainParams))
         trainReq = requests.get(url)
         trainID = re.sub("[^0-9a-zA-Z_\- ]", "", trainReq.text)
-        
+
         if ValidateStringNoSymbol(trainID) or not str(trainID) == str(args["build_id"]):
             # If only train, then return ID
             if args["option"] == "t":
@@ -96,7 +96,7 @@ def HandleRenderPost(args):
 
     # Make all the charts needed to display
     aSTEPDataOuptput = CsvToTimeSeries(data, "Data Set")
-    chartTimeSeries = TimeSeriesToGenericTsGraph(originalFile, aSTEPDataOuptput, 20)
+    chartTimeSeries = TimeSeriesToGenericTsGraph(originalFile, aSTEPDataOuptput, 20, args["window_rnn"])
     originalChartJs = TimeSeriesToChartJs(originalFile, "line", "Input")
     predictChartJs = TimeSeriesToChartJs(aSTEPDataOuptput, "line", "Predict")
     buildIDChart = MakeBuildIDChart(args["build_id"], args["datafile_id"])
@@ -155,7 +155,7 @@ def FillPresetValues(args, presetName):
 def MakeBuildIDChart(buildID, datafileID):
     return {
         "chart_type": "text",
-        "content": "<div style='color: white; text-align: center; background-color: #000000; padding: 2px'><p style='margin: 0; padding: 5px;'>Build ID: <i>" + str(buildID) + "</i></p><pstyle='margin: 0; padding: 5px;'>Data File ID: <i>" + str(datafileID) + "</i></p><div>" 
+        "content": "<div style='color: white; text-align: center; background-color: #000000; padding: 2px'><p style='margin: 0; padding: 5px;'>Build ID: <i>" + str(buildID) + "</i></p><pstyle='margin: 0; padding: 5px;'>Data File ID: <i>" + str(datafileID) + "</i></p><div>"
     }
 
 # Make a data chart to display raw data to users
@@ -181,8 +181,8 @@ def ConvertArgsToParams(args):
 # Validate input fields for /render are of correct format
 def ValidationOfRenderArgs(args):
     checks = []
-
     checks.append(ValidateStringNoSymbol(args["option"]))
+
     if args["option"] == "tp" or args["option"] == "t":
         checks.append(ValidateRenderNumber(args["epoch"]))
         checks.append(ValidateStringNoSymbol(args["preset"]))
@@ -227,10 +227,10 @@ def ValidateRenderNumber(arg):
 
 # Handle request for data from /data
 def HandleData(args):
-    if IsEmptyString(args["build_id"]):
-        return "No build ID entered to get data from! Please enter valid buildID or generate one via the 'Visualize Results' option."
-    elif not ValidateStringNoSymbol(args["build_id"]):
-        return "Invalid Build ID!"
+    if IsEmptyString(args["datafile_id"]):
+        return "No datafile ID entered to get data from! Please enter valid buildID or generate one via the 'Visualize Results' option. (TIP: Switch to 'Only visualize' mode)'"
+    elif not ValidateStringNoSymbol(args["datafile_id"]):
+        return "Invalid datafile ID!"
     else:
-        data = DownloadFromGCP(args["build_id"])
+        data = DownloadFromGCP(args["datafile_id"] + ".predict")
         return CsvToTimeSeries(data, "Data Set")

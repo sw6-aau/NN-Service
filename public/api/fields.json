@@ -23,7 +23,7 @@
                             "type": "formset-select",
                             "options": [
                                 {
-                                    "name": "Preset 1",
+                                    "name": "Generic",
                                     "value": "p1",
                                     "fields": []
                                 },
@@ -155,7 +155,7 @@
                             "type": "formset-select",
                             "options": [
                                 {
-                                    "name": "Preset 1",
+                                    "name": "Generic",
                                     "value": "p1",
                                     "fields": []
                                 },

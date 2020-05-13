@@ -12,7 +12,8 @@ def CsvToTimeSeries(csvFile, dataSetName):
     columnIndex = 0
     line = 0
     first = True
-    # First create the graph objects
+
+    # Create the graph objects, and ignore first row
     for row in reader:
         if first == True:
             first = False
@@ -52,7 +53,7 @@ def MakeDataPointObj(x, y):
 # aSTEP-time-series format to CSV
 def TimeSeriesToCsv(timeSeriesData):
     data = []
-    
+
     # Make array representation of all Y-values
     for graph in timeSeriesData["graphs"]:
         graphData = []
@@ -61,7 +62,7 @@ def TimeSeriesToCsv(timeSeriesData):
         data.append(graphData)
 
     # Write to file
-    saveFile = open("private/data/tsTo.csv", "w")
+    saveFile = open("private/data/tsTo.csv", "w+")
     for index in range(0, len(data[0])):
         row = ""
         for arrayID in range(0, len(data)):
@@ -97,19 +98,20 @@ def TimeSeriesToChartJs(timeSeriesData, chartType, tabName):
 
 # aSTEP-time-series format to generic-time-series chart
 # Note: Input of originalData and predict data should be TimeSeriesdata formatted
-def TimeSeriesToGenericTsGraph(originalData, predictData, predictSteps):
+def TimeSeriesToGenericTsGraph(originalData, predictData, predictSteps, windowSize):
     # Input validation
     if not ValidateInt(predictSteps) or not ValidateAstepTimeSeries(originalData) or not ValidateAstepTimeSeries(predictData):
         print("ERROR: Failed validation while converting to generic-time-series chart")
         return GetJsonFromPublic("api", "errorChart.json")
-    
+
     chartObj = {
         "chart_type": "time-series-data",
-        "name": "Prediction: " + originalData["dataSetName"], 
+        "name": "Prediction: " + originalData["dataSetName"],
         "content": {
             "settings": {
                 "to_chart": "generic-time-series",
-                "predictions": MakePredictionPart(predictData, predictSteps)
+                "predictions": MakePredictionPart(predictData, predictSteps),
+                "inputSize": windowSize
             },
             "data": originalData
         }
@@ -143,13 +145,13 @@ def MakePredictionPart(predictData, predictSteps):
             # Go through the predicted data and collect it
             for i in range(0, predictUntil):
                 dataArr.append(graph["data"][currentIndex + 1 + i]["y"])
-            
+
             # Add to the prediction array
             graphPredictions.append(MakePredictionObj(dataArr, tempErrorDict))
             currentIndex += 1
 
         predictionArr.append(graphPredictions)
-    
+
     return predictionArr
 
 # Make individual prediction object

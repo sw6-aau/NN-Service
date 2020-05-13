@@ -3,6 +3,7 @@ import glob
 import json
 import requests
 import wget
+import uuid
 from validationFunctions import ValidateRelativePath, ValidateFileName, ValidateFileExist
 
 # Write a file to the public folder
@@ -80,8 +81,9 @@ def DownloadFromGCP(fileName):
         return False
     urls = GetJsonFromPrivate("noGithub", "productionData.json")
     url = urls["downloadURL"] + str(fileName)
-    wget.download(url, "private/data/" + str(fileName))
-    return open("private/data/" + str(fileName), "r")
+    fileID = re.sub("[^0-9a-zA-Z_\- ]", "", str(uuid.uuid4()))
+    wget.download(url, "private/data/" + str(fileID))
+    return open("private/data/" + str(fileID), "r")
 
 # Used for testing purposes
 def MockUploadToGCP(fileData):
