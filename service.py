@@ -47,6 +47,9 @@ class Render(Resource):
     def post(self):
         # Parse request and save to dictionary
         parser = reqparse.RequestParser()
+        parser.add_argument("train_settings")
+        parser.add_argument("file_settings")
+        parser.add_argument("data-file", type=werkzeug.datastructures.FileStorage, location='files')
         parser.add_argument("data-input", type=werkzeug.datastructures.FileStorage, location='files')
         parser.add_argument("option")
         parser.add_argument("datafile_id")
@@ -129,6 +132,9 @@ def CheckAPIKey(key):
 class Combined(Resource):
     def post(self):
         parser = reqparse.RequestParser()
+        parser.add_argument("train_settings")
+        parser.add_argument("file_settings")
+        parser.add_argument("data-file", type=werkzeug.datastructures.FileStorage, location='files')
         parser.add_argument("data-input", type=werkzeug.datastructures.FileStorage, location='files')
         parser.add_argument("option")
         parser.add_argument("datafile_id")
