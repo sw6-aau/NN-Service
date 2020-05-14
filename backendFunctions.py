@@ -42,6 +42,10 @@ def HandleRenderPost(args):
         if args["preset"] == "p" and IsEmptyString(args["build_id"]):
             return ReturnErrorResponse("No build ID entered")
         args["build_id"] = re.sub("[^0-9a-zA-Z_\- ]", "", str(uuid.uuid4()))
+    
+    # If no datafile_id is entered then generate one
+    if IsEmptyString(args["datafile_id"]):
+        args["datafile_id"] = re.sub("[^0-9a-zA-Z_\- ]", "", str(uuid.uuid4()))
 
     # Upload files to GCP
     args = HandleUploadToCGP(args)
@@ -91,7 +95,7 @@ def HandleRenderPost(args):
             return ReturnErrorResponse("No data file ID entered for printing data ('Visualize Results' version)")
         data = DownloadFromGCP(args["datafile_id"])
     else:
-        data = DownloadFromGCP(args["datafile_id"] + ".predict")
+        data = DownloadFromGCP(args["build_id"] + ".predict")
 
     # Make all the charts needed to display
     aSTEPDataOuptput = CsvToTimeSeries(data, "Data Set")
@@ -140,7 +144,7 @@ def HandleUploadToCGP(args):
 # Upload a file based upon "prev", "csv", or "rfc" setting
 def UploadBasedOnSettings(setting, fileToUpload, args, setDatafile):
     newArgs = args
-
+    # If using a previously uploaded file
     if setting == "prev":
         if setDatafile:
             if IsEmptyString(newArgs["datafile_id"]):
@@ -152,22 +156,27 @@ def UploadBasedOnSettings(setting, fileToUpload, args, setDatafile):
                 return "No file ID entered!"
             else:
                 return newArgs # as datafile_id is already set
+    # If upload is of CSV type
     elif setting == "csv":
-        uploadID = UploadToGCP(fileToUpload, newArgs["build_id"])
-        if (setDatafile):
+        if setDatafile:
+            uploadID = UploadToGCP(fileToUpload, newArgs["datafile_id"])
             newArgs["datafile_id"] = uploadID
         else:
+            uploadID = UploadToGCP(fileToUpload, newArgs["build_id"])
             newArgs["build_id"] = uploadID
+    #If upload is of RFC0016 type
     elif setting == "rfc":
         tempID = re.sub("[^0-9a-zA-Z_\- ]", "", str(uuid.uuid4()))
         tempUploadID = UploadToGCP(fileToUpload.stream.read(), tempID)
         tempFile = DownloadFromGCP(tempID)
         data = TimeSeriesToCsv(json.loads(tempFile.read()))
-        uploadID = UploadToGCP(data, newArgs["build_id"])
-        if (setDatafile):
+        if setDatafile:
+            uploadID = UploadToGCP(data, newArgs["datafile_id"])
             newArgs["datafile_id"] = uploadID
         else:
+            uploadID = UploadToGCP(data, newArgs["build_id"])
             newArgs["build_id"] = uploadID
+    # If none of the above
     else:
         return "Invalid file setting!"
 
