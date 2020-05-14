@@ -13,7 +13,6 @@
                         {
                             "name": "train_settings",
                             "label": "Data: Training",
-                            "default": "csv",
                             "type": "formset-select",
                             "options": [
                                 {
@@ -43,7 +42,6 @@
                         {
                             "name": "file_settings",
                             "label": "Data: Predict",
-                            "default": "csv",
                             "type": "formset-select",
                             "options": [
                                 {
@@ -157,7 +155,6 @@
                         {
                             "name": "train_settings",
                             "label": "Data: Training",
-                            "default": "csv",
                             "type": "formset-select",
                             "options": [
                                 {
@@ -178,48 +175,6 @@
                                             "name": "build_id",
                                             "label": "Build ID",
                                             "placeholder": "Please enter ID",
-                                            "type": "input"
-                                        }
-                                    ]
-                                }
-                            ]
-                        },
-                        {
-                            "name": "file_settings",
-                            "label": "Data: Predict",
-                            "default": "csv",
-                            "type": "formset-select",
-                            "options": [
-                                {
-                                    "name": "Upload: CSV",
-                                    "value": "csv",
-                                    "fields": [
-                                        {
-                                            "name": "data-file",
-                                            "label": "Upload data file",
-                                            "type": "file"
-                                        }
-                                    ]
-                                },
-                                {
-                                    "name": "Upload: RFC0016",
-                                    "value": "rfc",
-                                    "fields": [
-                                        {
-                                            "name": "data-file",
-                                            "label": "Upload data file",
-                                            "type": "file"
-                                        }
-                                    ]
-                                },
-                                {
-                                    "name": "Previously uploaded",
-                                    "value": "prev",
-                                    "fields": [
-                                        {
-                                            "name": "datafile_id",
-                                            "label": "Data file ID",
-                                            "placeholder": "(Please enter ID)",
                                             "type": "input"
                                         }
                                     ]
@@ -307,7 +262,6 @@
                         {
                             "name": "file_settings",
                             "label": "Data: Predict",
-                            "default": "csv",
                             "type": "formset-select",
                             "options": [
                                 {
@@ -343,7 +297,6 @@
                         {
                             "name": "file_settings",
                             "label": "Data to visualize",
-                            "default": "prev",
                             "type": "formset-select",
                             "options": [
                                 {

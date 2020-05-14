@@ -91,11 +91,14 @@ def HandleRenderPost(args):
             return ReturnErrorResponse("No data file ID entered for printing data ('Visualize Results' version)")
         data = DownloadFromGCP(args["datafile_id"])
     else:
-        data = DownloadFromGCP(args["build_id"] + ".predict")
+        data = DownloadFromGCP(args["datafile_id"] + ".predict")
 
     # Make all the charts needed to display
     aSTEPDataOuptput = CsvToTimeSeries(data, "Data Set")
-    chartTimeSeries = TimeSeriesToGenericTsGraph(originalFile, aSTEPDataOuptput, 20, args["window_rnn"])
+    if args["option"] == "v" and not args["file_settings"] == "prev":
+        chartTimeSeries = TimeSeriesToGenericTsGraph(originalFile, aSTEPDataOuptput, args["window_rnn"] + args["horizon"], True)
+    else:
+        chartTimeSeries = TimeSeriesToGenericTsGraph(originalFile, aSTEPDataOuptput, args["window_rnn"] + args["horizon"], False)
     originalChartJs = TimeSeriesToChartJs(originalFile, "line", "Input")
     predictChartJs = TimeSeriesToChartJs(aSTEPDataOuptput, "line", "Predict")
     buildIDChart = MakeBuildIDChart(args["build_id"], args["datafile_id"])
@@ -121,37 +124,49 @@ def HandleUploadToCGP(args):
     # Upon train and predict, and train
     if newArgs["option"] == "tp" or newArgs["option"] == "t":
         # Train data:
-        newArgs = UploadBasedOnSettings(args["train_settings"], newArgs["data-input"], args)
+        newArgs = UploadBasedOnSettings(args["train_settings"], newArgs["data-input"], args, False)
         if type(newArgs) == str:
             return newArgs
         # Predict data:
-        newArgs = UploadBasedOnSettings(args["file_settings"], newArgs["data-file"], args)
+        newArgs = UploadBasedOnSettings(args["file_settings"], newArgs["data-file"], args, True)
         return newArgs
 
     # Upon visualize or predict
     if newArgs["option"] == "v" or newArgs["option"] == "p":
-        newArgs = UploadBasedOnSettings(args["file_settings"], newArgs["data-input"], args)
+        newArgs = UploadBasedOnSettings(args["file_settings"], newArgs["data-input"], args, True)
         return newArgs
 
 # Upload a file based upon "prev", "csv", or "rfc" setting
-def UploadBasedOnSettings(setting, fileToUpload, args):
+def UploadBasedOnSettings(setting, fileToUpload, args, setDatafile):
     newArgs = args
 
     if setting == "prev":
-        if IsEmptyString(newArgs["datafile_id"]):
-            return "No file ID entered!"
+        if setDatafile:
+            if IsEmptyString(newArgs["datafile_id"]):
+                return "No file ID entered!"
+            else:
+                return newArgs # as datafile_id is already set
         else:
-            return newArgs # as datafile_id is already set
+            if IsEmptyString(newArgs["build_id"]):
+                return "No file ID entered!"
+            else:
+                return newArgs # as datafile_id is already set
     elif setting == "csv":
         uploadID = UploadToGCP(fileToUpload, newArgs["build_id"])
-        newArgs["datafile_id"] = uploadID
+        if (setDatafile):
+            newArgs["datafile_id"] = uploadID
+        else:
+            newArgs["build_id"] = uploadID
     elif setting == "rfc":
         tempID = re.sub("[^0-9a-zA-Z_\- ]", "", str(uuid.uuid4()))
         tempUploadID = UploadToGCP(fileToUpload.stream.read(), tempID)
         tempFile = DownloadFromGCP(tempID)
         data = TimeSeriesToCsv(json.loads(tempFile.read()))
         uploadID = UploadToGCP(data, newArgs["build_id"])
-        newArgs["datafile_id"] = uploadID
+        if (setDatafile):
+            newArgs["datafile_id"] = uploadID
+        else:
+            newArgs["build_id"] = uploadID
     else:
         return "Invalid file setting!"
 
@@ -223,7 +238,6 @@ def ValidationOfRenderArgs(args):
 
     if args["option"] == "tp" or args["option"] == "t":
         checks.append(ValidateStringNoSymbol(args["train_settings"]))
-        checks.append(ValidateStringNoSymbol(args["file_settings"]))
         checks.append(ValidateRenderNumber(args["epoch"]))
         checks.append(ValidateStringNoSymbol(args["preset"]))
         # Only check rest if manual-mode is chosen
@@ -238,6 +252,9 @@ def ValidationOfRenderArgs(args):
             checks.append(ValidateRenderNumber(args["hid_rnn"]))
             checks.append(ValidateRenderNumber(args["window_rnn"]))
             checks.append(ValidateRenderNumber(args["windows_hw"]))
+    
+    if args["option"] == "tp":
+        checks.append(ValidateStringNoSymbol(args["file_settings"]))
 
     if args["option"] == "p":
         checks.append(ValidateStringNoSymbol(args["file_settings"]))

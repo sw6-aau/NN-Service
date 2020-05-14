@@ -98,9 +98,9 @@ def TimeSeriesToChartJs(timeSeriesData, chartType, tabName):
 
 # aSTEP-time-series format to generic-time-series chart
 # Note: Input of originalData and predict data should be TimeSeriesdata formatted
-def TimeSeriesToGenericTsGraph(originalData, predictData, predictSteps, windowSize):
+def TimeSeriesToGenericTsGraph(originalData, predictData, windowSize, cutPredict):
     # Input validation
-    if not ValidateInt(predictSteps) or not ValidateAstepTimeSeries(originalData) or not ValidateAstepTimeSeries(predictData):
+    if not ValidateAstepTimeSeries(originalData) or not ValidateAstepTimeSeries(predictData):
         print("ERROR: Failed validation while converting to generic-time-series chart")
         return GetJsonFromPublic("api", "errorChart.json")
 
@@ -110,7 +110,7 @@ def TimeSeriesToGenericTsGraph(originalData, predictData, predictSteps, windowSi
         "content": {
             "settings": {
                 "to_chart": "generic-time-series",
-                "predictions": MakePredictionPart(predictData, predictSteps),
+                "predictions": MakePredictionPart(predictData, cutPredict, windowSize),
                 "inputSize": windowSize
             },
             "data": originalData
@@ -119,12 +119,13 @@ def TimeSeriesToGenericTsGraph(originalData, predictData, predictSteps, windowSi
     return chartObj
 
 # Make prediction-part of the generic-time-series chart
-def MakePredictionPart(predictData, predictSteps):
+def MakePredictionPart(predictData, cutPredict, windowSize):
     predictionArr = []
     dataArr = []
     tempErrorDict = {
         "something": 0
     }
+    predictSteps = int(len(predictData["graphs"][0]["data"]) / 20)
 
     # Go through all graphs and make a prediction array for them
     for graph in predictData["graphs"]:
@@ -134,6 +135,11 @@ def MakePredictionPart(predictData, predictSteps):
 
         # Make prediction object for each x-value
         for dataPoint in graph["data"]:
+            # If we want to "cut predict", then do not do anything the index before windowSize
+            if cutPredict and currentIndex < windowSize:
+                currentIndex += 1
+                continue
+            
             dataArr = []
 
             # How much in the future should be predicted for this index?
@@ -143,7 +149,7 @@ def MakePredictionPart(predictData, predictSteps):
                 predictUntil = predictSteps
 
             # Go through the predicted data and collect it
-            for i in range(0, predictUntil):
+            for i in range(0, int(predictUntil)):
                 dataArr.append(graph["data"][currentIndex + 1 + i]["y"])
 
             # Add to the prediction array
