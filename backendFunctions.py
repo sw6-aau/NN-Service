@@ -95,7 +95,7 @@ def HandleRenderPost(args):
 
     # Make all the charts needed to display
     aSTEPDataOuptput = CsvToTimeSeries(data, "Data Set")
-    if args["option"] == "v" and not args["file_settings"] == "prev":
+    if (args["option"] == "v" and not args["file_settings"] == "prev") or args["option"] == "print":
         chartTimeSeries = TimeSeriesToGenericTsGraph(originalFile, aSTEPDataOuptput, args["window_rnn"] + args["horizon"], True)
     else:
         chartTimeSeries = TimeSeriesToGenericTsGraph(originalFile, aSTEPDataOuptput, args["window_rnn"] + args["horizon"], False)
@@ -134,7 +134,8 @@ def HandleUploadToCGP(args):
     # Upon visualize or predict
     if newArgs["option"] == "v" or newArgs["option"] == "p":
         newArgs = UploadBasedOnSettings(args["file_settings"], newArgs["data-input"], args, True)
-        return newArgs
+    
+    return newArgs
 
 # Upload a file based upon "prev", "csv", or "rfc" setting
 def UploadBasedOnSettings(setting, fileToUpload, args, setDatafile):
