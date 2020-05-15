@@ -108,6 +108,8 @@ def HandleRenderPost(args):
     buildIDChart = MakeBuildIDChart(args["build_id"], args["datafile_id"])
     outputDataAstep = MakeDataChart("Output - RFC0016", str(json.dumps(aSTEPDataOuptput, indent=4)))
     outputDataCsv = MakeDataChart("Output - CSV", str(TimeSeriesToCsv(aSTEPDataOuptput)))
+    inputDataAstep = MakeDataChart("Input - RFC0016", str(json.dumps(originalFile, indent=4)))
+    inputDataCsv = MakeDataChart("Input - CSV", str(TimeSeriesToCsv(originalFile)))
 
     return {
         "chart_type": "composite-scroll",
@@ -115,7 +117,7 @@ def HandleRenderPost(args):
             buildIDChart,
             {
                 "chart_type": "composite",
-                "content": [chartTimeSeries, originalChartJs, predictChartJs, outputDataAstep, outputDataCsv]
+                "content": [chartTimeSeries, originalChartJs, predictChartJs, outputDataAstep, outputDataCsv, inputDataAstep, inputDataCsv]
             }
         ]
     }
