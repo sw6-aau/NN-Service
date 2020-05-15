@@ -83,7 +83,7 @@
                         {
                             "name": "epoch",
                             "label": "Epochs",
-                            "default": 10,
+                            "default": 15,
                             "type": "input-number"
                         },
                         {
@@ -109,37 +109,43 @@
                                         {
                                             "name": "horizon",
                                             "label": "Horizon",
-                                            "placeholder": "(Only in manual-mode)",
+                                            "default": 12,
                                             "type": "input-number"
                                         },
                                         {
                                             "name": "dropout",
                                             "label": "Dropout",
-                                            "placeholder": "(Only in manual-mode)",
+                                            "default": 0.2,
                                             "type": "input-number"
                                         },
                                         {
                                             "name": "hid_cnn",
                                             "label": "Autoencoder CNN hidden units",
-                                            "placeholder": "(Only in manual-mode)",
+                                            "default": 50,
                                             "type": "input-number"
                                         },
                                         {
                                             "name": "hid_rnn",
                                             "label": "RNN hidden units",
-                                            "placeholder": "(Only in manual-mode)",
+                                            "default": 50,
                                             "type": "input-number"
                                         },
                                         {
                                             "name": "window_rnn",
                                             "label": "RNN window size",
-                                            "placeholder": "(Only in manual-mode)",
+                                            "default": 168,
                                             "type": "input-number"
                                         },
                                         {
                                             "name": "windows_hw",
                                             "label": "Highway window",
-                                            "placeholder": "(Only in manual-mode)",
+                                            "default": 24,
+                                            "type": "input-number"
+                                        },
+                                        {
+                                            "name": "skip_rnn",
+                                            "label": "Skip RNN",
+                                            "default": 24,
                                             "type": "input-number"
                                         }
                                     ]
@@ -184,7 +190,7 @@
                         {
                             "name": "epoch",
                             "label": "Epochs",
-                            "default": 10,
+                            "default": 15,
                             "type": "input-number"
                         },
                         {
@@ -210,37 +216,43 @@
                                         {
                                             "name": "horizon",
                                             "label": "Horizon",
-                                            "placeholder": "(Only in manual-mode)",
+                                            "default": 12,
                                             "type": "input-number"
                                         },
                                         {
                                             "name": "dropout",
                                             "label": "Dropout",
-                                            "placeholder": "(Only in manual-mode)",
+                                            "default": 0.2,
                                             "type": "input-number"
                                         },
                                         {
                                             "name": "hid_cnn",
                                             "label": "Autoencoder CNN hidden units",
-                                            "placeholder": "(Only in manual-mode)",
+                                            "default": 50,
                                             "type": "input-number"
                                         },
                                         {
                                             "name": "hid_rnn",
                                             "label": "RNN hidden units",
-                                            "placeholder": "(Only in manual-mode)",
+                                            "default": 50,
                                             "type": "input-number"
                                         },
                                         {
                                             "name": "window_rnn",
                                             "label": "RNN window size",
-                                            "placeholder": "(Only in manual-mode)",
+                                            "default": 168,
                                             "type": "input-number"
                                         },
                                         {
                                             "name": "windows_hw",
                                             "label": "Highway window",
-                                            "placeholder": "(Only in manual-mode)",
+                                            "default": 24,
+                                            "type": "input-number"
+                                        },
+                                        {
+                                            "name": "skip_rnn",
+                                            "label": "Skip RNN",
+                                            "default": 24,
                                             "type": "input-number"
                                         }
                                     ]
