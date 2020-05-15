@@ -3,7 +3,7 @@ from validationFunctions import ValidateInt, ValidateAstepTimeSeries
 from storageFunctions import GetJsonFromPublic
 
 # Convert from CSV to aSTEP-time-series format
-def CsvToTimeSeries(csvFile, dataSetName):
+def CsvToTimeSeries(csvFile, dataSetName, cutFirst):
     outputObj = {
         "dataSetName": dataSetName,
         "graphs": []
@@ -15,7 +15,7 @@ def CsvToTimeSeries(csvFile, dataSetName):
 
     # Create the graph objects, and ignore first row
     for row in reader:
-        if first == True:
+        if cutFirst and first == True:
             first = False
         else:
             if line == 0:

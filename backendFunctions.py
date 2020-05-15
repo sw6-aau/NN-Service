@@ -53,7 +53,7 @@ def HandleRenderPost(args):
         return ReturnErrorResponse(args)
 
     # Save orginal file as in time series format
-    originalFile = CsvToTimeSeries(DownloadFromGCP(args["datafile_id"]), "data set")
+    originalFile = CsvToTimeSeries(DownloadFromGCP(args["datafile_id"]), "data set", False)
 
     # Train if desired by user
     if args["option"] == "tp" or args["option"] == "t":
@@ -76,11 +76,13 @@ def HandleRenderPost(args):
         predictParams = MakePredictParams(args)
         url = str(noGithub["predictURL"]) + str(ConvertArgsToParams(predictParams))
         predictReq = requests.get(url)
-        predictID = re.sub("[^0-9a-zA-Z_\- ]", '', predictReq.text)
+        predictDict = json.loads(predictReq.text)
+        print(predictDict)
+        predictID = re.sub("[^0-9a-zA-Z_\- ]", '', predictDict["predictid"])
         if not ValidateStringNoSymbol(predictID):
             return ReturnErrorResponse("Failed in predict stage: Invalid predictID")
-        if not str(predictID) == str(args["build_id"]):
-            return ReturnErrorResponse("Failed in predict stage: Incorrect match of IDs '" + str(predictID) + "' != '" + str(args["build_id"]) + "'")
+        if not str(predictID) == str(args["datafile_id"]):
+            return ReturnErrorResponse("Failed in predict stage: Incorrect match of IDs '" + str(predictID) + "' != '" + str(args["datafile_id"]) + "'")
 
     # Download datafile from GCP
     if args["option"] == "v":
@@ -95,17 +97,29 @@ def HandleRenderPost(args):
             return ReturnErrorResponse("No data file ID entered for printing data ('Visualize Results' version)")
         data = DownloadFromGCP(args["datafile_id"])
     else:
-        data = DownloadFromGCP(args["build_id"] + ".predict")
+        data = DownloadFromGCP(args["datafile_id"] + ".predict") 
 
     # Make all the charts needed to display
-    aSTEPDataOuptput = CsvToTimeSeries(data, "Data Set")
+    aSTEPDataOuptput = CsvToTimeSeries(data, "Data Set", True)
+    print(str(int(args["window_rnn"])) + " | " + str(int(args["horizon"])))
+    inputSize = int(args["window_rnn"]) + int(args["horizon"]) - int(1) 
+    print(inputSize)
     if (args["option"] == "v" and not args["file_settings"] == "prev") or args["option"] == "print":
-        chartTimeSeries = TimeSeriesToGenericTsGraph(originalFile, aSTEPDataOuptput, args["window_rnn"] + args["horizon"], True)
+        chartTimeSeries = TimeSeriesToGenericTsGraph(originalFile, aSTEPDataOuptput, inputSize, True)
     else:
-        chartTimeSeries = TimeSeriesToGenericTsGraph(originalFile, aSTEPDataOuptput, args["window_rnn"] + args["horizon"], False)
+        chartTimeSeries = TimeSeriesToGenericTsGraph(originalFile, aSTEPDataOuptput, inputSize, False)
     originalChartJs = TimeSeriesToChartJs(originalFile, "line", "Input")
     predictChartJs = TimeSeriesToChartJs(aSTEPDataOuptput, "line", "Predict")
-    buildIDChart = MakeBuildIDChart(args["build_id"], args["datafile_id"])
+    if args["option"] == "tp" or args["option"] == "p":
+        buildInfoChart = {
+            "chart_type": "composite-scroll",
+            "content": [
+                MakeBuildIDChart(args["build_id"], args["datafile_id"]), 
+                MakeRSEDisplay(predictDict["rse"])
+            ]
+        }
+    else:
+        buildInfoChart = MakeBuildIDChart(args["build_id"], args["datafile_id"])
     outputDataAstep = MakeDataChart("Output - RFC0016", str(json.dumps(aSTEPDataOuptput, indent=4)))
     outputDataCsv = MakeDataChart("Output - CSV", str(TimeSeriesToCsv(aSTEPDataOuptput)))
     inputDataAstep = MakeDataChart("Input - RFC0016", str(json.dumps(originalFile, indent=4)))
@@ -114,7 +128,7 @@ def HandleRenderPost(args):
     return {
         "chart_type": "composite-scroll",
         "content": [
-            buildIDChart,
+            buildInfoChart,
             {
                 "chart_type": "composite",
                 "content": [chartTimeSeries, originalChartJs, predictChartJs, outputDataAstep, outputDataCsv, inputDataAstep, inputDataCsv]
@@ -222,7 +236,7 @@ def FillPresetValues(args, presetName):
 def MakeBuildIDChart(buildID, datafileID):
     return {
         "chart_type": "text",
-        "content": "<div style='color: white; text-align: center; background-color: #000000; padding: 2px'><p style='margin: 0; padding: 5px;'>Build ID: <i>" + str(buildID) + "</i></p><pstyle='margin: 0; padding: 5px;'>Data File ID: <i>" + str(datafileID) + "</i></p><div>"
+        "content": "<div style='color: white; text-align: center; background-color: #000000; padding: 2px'><p style='margin: 0; padding: 5px;'>Build ID: <i>" + str(buildID) + "</i></p><p style='margin: 0; padding: 5px;'>Data File ID: <i>" + str(datafileID) + "</i></p><div>"
     }
 
 # Make a data chart to display raw data to users
@@ -231,6 +245,13 @@ def MakeDataChart(name, data):
         "chart_type": "text",
         "name": name,
         "content": "<div style='width: 95%; height: 70vh; margin: 2.5%'><textarea style='width: 100%; height: 100%; margin: 0'>" + data + "</textarea></div>"
+    }
+
+# Make html to display the RSE of a prediction
+def MakeRSEDisplay(rse):
+    return {
+        "chart_type": "text",
+        "content": "<div style='color: white; text-align: center; background-color: #1e3142; padding: 2px'><p style='margin: 0; padding: 5px;'>RSE of prediction: <i>" + str(rse) + "</i></p>"
     }
 
 # Takes an array of args, and returns a HTML param string
@@ -306,4 +327,4 @@ def HandleData(args):
         return "Invalid datafile ID!"
     else:
         data = DownloadFromGCP(args["datafile_id"] + ".predict")
-        return CsvToTimeSeries(data, "Data Set")
+        return CsvToTimeSeries(data, "Data Set", True)
