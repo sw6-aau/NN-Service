@@ -53,7 +53,7 @@ def HandleRenderPost(args):
         return ReturnErrorResponse(args)
 
     # Save orginal file as in time series format
-    originalFile = CsvToTimeSeries(DownloadFromGCP(args["datafile_id"]), "data set")
+    originalFile = CsvToTimeSeries(DownloadFromGCP(args["datafile_id"]), "data set", False)
 
     # Train if desired by user
     if args["option"] == "tp" or args["option"] == "t":
@@ -98,11 +98,13 @@ def HandleRenderPost(args):
         data = DownloadFromGCP(args["build_id"] + ".predict")
 
     # Make all the charts needed to display
-    aSTEPDataOuptput = CsvToTimeSeries(data, "Data Set")
+    aSTEPDataOuptput = CsvToTimeSeries(data, "Data Set", True)
+    inputSize = int(args["window_rnn"]) + int(args["horizon"]) - int(1) 
+    print(inputSize)
     if (args["option"] == "v" and not args["file_settings"] == "prev") or args["option"] == "print":
-        chartTimeSeries = TimeSeriesToGenericTsGraph(originalFile, aSTEPDataOuptput, args["window_rnn"] + args["horizon"], True)
+        chartTimeSeries = TimeSeriesToGenericTsGraph(originalFile, aSTEPDataOuptput, inputSize, True)
     else:
-        chartTimeSeries = TimeSeriesToGenericTsGraph(originalFile, aSTEPDataOuptput, args["window_rnn"] + args["horizon"], False)
+        chartTimeSeries = TimeSeriesToGenericTsGraph(originalFile, aSTEPDataOuptput, inputSize, False)
     originalChartJs = TimeSeriesToChartJs(originalFile, "line", "Input")
     predictChartJs = TimeSeriesToChartJs(aSTEPDataOuptput, "line", "Predict")
     buildIDChart = MakeBuildIDChart(args["build_id"], args["datafile_id"])
@@ -306,4 +308,4 @@ def HandleData(args):
         return "Invalid datafile ID!"
     else:
         data = DownloadFromGCP(args["datafile_id"] + ".predict")
-        return CsvToTimeSeries(data, "Data Set")
+        return CsvToTimeSeries(data, "Data Set", True)
