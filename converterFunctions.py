@@ -31,7 +31,6 @@ def CsvToTimeSeries(csvFile, dataSetName, cutFirst):
 
     return outputObj
 
-
 # Make a default graph object
 def MakeDefaultGraphObj(label):
     defaultObj = {
@@ -122,9 +121,7 @@ def TimeSeriesToGenericTsGraph(originalData, predictData, windowSize, cutPredict
 def MakePredictionPart(predictData, cutPredict, windowSize):
     predictionArr = []
     dataArr = []
-    tempErrorDict = {
-        "something": 0
-    }
+    emptyErrorDict = {}
     predictSteps = int(len(predictData["graphs"][0]["data"]) / 20)
 
     # Go through all graphs and make a prediction array for them
@@ -153,7 +150,7 @@ def MakePredictionPart(predictData, cutPredict, windowSize):
                 dataArr.append(graph["data"][currentIndex + 1 + i]["y"])
 
             # Add to the prediction array
-            graphPredictions.append(MakePredictionObj(dataArr, tempErrorDict))
+            graphPredictions.append(MakePredictionObj(dataArr, emptyErrorDict))
             currentIndex += 1
 
         predictionArr.append(graphPredictions)

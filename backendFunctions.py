@@ -38,7 +38,7 @@ def HandleRenderPost(args):
         args = FillPresetValues(args, args["preset"])
 
     # If no build_id is entered then generate one
-    if IsEmptyString(args["build_id"]):
+    if IsEmptyString(args["build_id"]) and (not args["option"] == "v" or not args["option"] == "data"):
         if args["preset"] == "p" and IsEmptyString(args["build_id"]):
             return ReturnErrorResponse("No build ID entered")
         args["build_id"] = re.sub("[^0-9a-zA-Z_\- ]", "", str(uuid.uuid4()))
@@ -53,16 +53,20 @@ def HandleRenderPost(args):
         return ReturnErrorResponse(args)
 
     # Save orginal file as in time series format
-    originalFile = CsvToTimeSeries(DownloadFromGCP(args["datafile_id"]), "data set", False)
+    originalFile = CsvToTimeSeries(DownloadFromGCP(args["datafile_id"]), "Data set", False)
 
     # Train if desired by user
     if args["option"] == "tp" or args["option"] == "t":
-        trainParams = MakeTrainParams(args)
-        url = str(noGithub["trainURL"]) + str(ConvertArgsToParams(trainParams))
-        trainReq = requests.get(url)
+        registerParams = MakeRegisterParams(args)
+        registerUrl = str(noGithub["registerURL"]) + str(ConvertArgsToParams(registerParams))
+        registerReq = requests.get(registerUrl)
+        registerID = re.sub("[^0-9a-zA-Z_\- ]", "", registerReq.text)
+        
+        trainUrl = str(noGithub["trainURL"] + "?build_id=" + str(args["build_id"]))
+        trainReq = requests.get(trainUrl)
         trainID = re.sub("[^0-9a-zA-Z_\- ]", "", trainReq.text)
 
-        if ValidateStringNoSymbol(trainID) or not str(trainID) == str(args["build_id"]):
+        if ValidateStringNoSymbol(trainID) or ValidateStringNoSymbol(registerID) or not str(trainID) == str(args["build_id"]) or not str(registerID) == str(args["build_id"]):
             # If only train, then return ID
             if args["option"] == "t":
                 return MakeBuildIDChart(args["build_id"], args["datafile_id"])
@@ -77,7 +81,6 @@ def HandleRenderPost(args):
         url = str(noGithub["predictURL"]) + str(ConvertArgsToParams(predictParams))
         predictReq = requests.get(url)
         predictDict = json.loads(predictReq.text)
-        print(predictDict)
         predictID = re.sub("[^0-9a-zA-Z_\- ]", '', predictDict["predictid"])
         if not ValidateStringNoSymbol(predictID):
             return ReturnErrorResponse("Failed in predict stage: Invalid predictID")
@@ -101,9 +104,7 @@ def HandleRenderPost(args):
 
     # Make all the charts needed to display
     aSTEPDataOuptput = CsvToTimeSeries(data, "Data Set", True)
-    print(str(int(args["window_rnn"])) + " | " + str(int(args["horizon"])))
     inputSize = int(args["window_rnn"]) + int(args["horizon"]) - int(1) 
-    print(inputSize)
     if (args["option"] == "v" and not args["file_settings"] == "prev") or args["option"] == "print":
         chartTimeSeries = TimeSeriesToGenericTsGraph(originalFile, aSTEPDataOuptput, inputSize, True)
     else:
@@ -199,7 +200,7 @@ def UploadBasedOnSettings(setting, fileToUpload, args, setDatafile):
     return newArgs
 
 # Take out the params needed for /train
-def MakeTrainParams(args):
+def MakeRegisterParams(args):
     trainParams = {}
     trainParams["build_id"] = args["build_id"]
     trainParams["horizon"] = args["horizon"]
@@ -236,7 +237,7 @@ def FillPresetValues(args, presetName):
 def MakeBuildIDChart(buildID, datafileID):
     return {
         "chart_type": "text",
-        "content": "<div style='color: white; text-align: center; background-color: #000000; padding: 2px'><p style='margin: 0; padding: 5px;'>Build ID: <i>" + str(buildID) + "</i></p><p style='margin: 0; padding: 5px;'>Data File ID: <i>" + str(datafileID) + "</i></p><div>"
+        "content": "<div style='color: #939393; text-align: center; background-color: #000000; padding: 2px'><p style='margin: 0; padding: 5px;'>Build ID: <i>" + str(buildID) + "</i></p><p style='margin: 0; padding: 5px;'>Data File ID: <i>" + str(datafileID) + "</i></p><div>"
     }
 
 # Make a data chart to display raw data to users
@@ -251,7 +252,7 @@ def MakeDataChart(name, data):
 def MakeRSEDisplay(rse):
     return {
         "chart_type": "text",
-        "content": "<div style='color: white; text-align: center; background-color: #1e3142; padding: 2px'><p style='margin: 0; padding: 5px;'>RSE of prediction: <i>" + str(rse) + "</i></p>"
+        "content": "<div style='color: white; text-align: center; background-color: #1e3142; padding: 1%'><h5 style='margin: 0; padding: 5px;'>RSE of prediction: <i>" + str(rse) + "</i></h5>"
     }
 
 # Takes an array of args, and returns a HTML param string
