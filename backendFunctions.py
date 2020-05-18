@@ -57,12 +57,15 @@ def HandleRenderPost(args):
 
     # Train if desired by user
     if args["option"] == "tp" or args["option"] == "t":
-        trainParams = MakeTrainParams(args)
-        url = str(noGithub["trainURL"]) + str(ConvertArgsToParams(trainParams))
-        trainReq = requests.get(url)
+        registerParams = MakeRegisterParams(args)
+        registerUrl = str(noGithub["registerURL"]) + str(ConvertArgsToParams(registerParams))
+        registerReq = requests.get(registerUrl)
+        registerID = re.sub("[^0-9a-zA-Z_\- ]", "", registerReq.text)
+        trainUrl = str(noGithub["trainURL"] + "?build_id=" + str(args["build_id"]))
+        trainReq = requests.get(trainUrl)
         trainID = re.sub("[^0-9a-zA-Z_\- ]", "", trainReq.text)
 
-        if ValidateStringNoSymbol(trainID) or not str(trainID) == str(args["build_id"]):
+        if ValidateStringNoSymbol(trainID) or ValidateStringNoSymbol(registerID) or not str(trainID) == str(args["build_id"]) or not str(registerID) == str(args["build_id"]):
             # If only train, then return ID
             if args["option"] == "t":
                 return MakeBuildIDChart(args["build_id"], args["datafile_id"])
@@ -77,7 +80,6 @@ def HandleRenderPost(args):
         url = str(noGithub["predictURL"]) + str(ConvertArgsToParams(predictParams))
         predictReq = requests.get(url)
         predictDict = json.loads(predictReq.text)
-        print(predictDict)
         predictID = re.sub("[^0-9a-zA-Z_\- ]", '', predictDict["predictid"])
         if not ValidateStringNoSymbol(predictID):
             return ReturnErrorResponse("Failed in predict stage: Invalid predictID")
@@ -101,9 +103,7 @@ def HandleRenderPost(args):
 
     # Make all the charts needed to display
     aSTEPDataOuptput = CsvToTimeSeries(data, "Data Set", True)
-    print(str(int(args["window_rnn"])) + " | " + str(int(args["horizon"])))
     inputSize = int(args["window_rnn"]) + int(args["horizon"]) - int(1) 
-    print(inputSize)
     if (args["option"] == "v" and not args["file_settings"] == "prev") or args["option"] == "print":
         chartTimeSeries = TimeSeriesToGenericTsGraph(originalFile, aSTEPDataOuptput, inputSize, True)
     else:
@@ -199,7 +199,7 @@ def UploadBasedOnSettings(setting, fileToUpload, args, setDatafile):
     return newArgs
 
 # Take out the params needed for /train
-def MakeTrainParams(args):
+def MakeRegisterParams(args):
     trainParams = {}
     trainParams["build_id"] = args["build_id"]
     trainParams["horizon"] = args["horizon"]
