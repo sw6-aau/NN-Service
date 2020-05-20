@@ -143,7 +143,7 @@
                                             "type": "input-number"
                                         },
                                         {
-                                            "name": "skip_rnn",
+                                            "name": "hid_skip_rnn",
                                             "label": "Skip RNN",
                                             "default": 24,
                                             "type": "input-number"
@@ -250,7 +250,7 @@
                                             "type": "input-number"
                                         },
                                         {
-                                            "name": "skip_rnn",
+                                            "name": "hid_skip_rnn",
                                             "label": "Skip RNN",
                                             "default": 24,
                                             "type": "input-number"
