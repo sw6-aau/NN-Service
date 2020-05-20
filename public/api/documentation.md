@@ -32,7 +32,7 @@
 
 **Short-RNN Window size:** How big a window that should be predicted by th. For example, if the window was 24 * 7, in a dataset where each time-step is one hour, the RNN would train predicting the next hour in 24 * 7 time-steps, see how right it were in these 24 * 7 predictions and adjusts its weight. This will repeat for the whole training dataset.  
 
-**Short-RNN Window size:** How many time steps it should skip in the RNN-skip network. For a dataset where one input corresponds to a hour, 24 skip time-steps would mean that RNN-skip would train predicting time-steps where one time-step corresponds to one day.
+**Long-RNN Window size:** How many time steps it should skip in the RNN-skip network. For a dataset where one input corresponds to a hour, 24 skip time-steps would mean that RNN-skip would train predicting time-steps where one time-step corresponds to one day.
 
 **Highway window:** How many hidden units the highway window linear layer should use.
 
