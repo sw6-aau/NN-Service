@@ -17,7 +17,7 @@
 
 **Epochs:** How many epochs the model should train in.
 
-**Param preset:** Choose parameter preset if you have chosen to train on a preset dataset. Here you can also chose "Manual-mode", where you can set the other parameters.
+**Param Preset:** Choose parameter preset if you have chosen to train on a preset dataset. Here you can also chose "Manual-mode", where you can set the other parameters.
 
 ## Manual fields:
 *If you have chosen "Manual-mode" in Param preset, then you can insert the parameters manually from your own hypertuning.*
@@ -26,15 +26,15 @@
 
 **Dropout:** How many percents of unit weights it should forget between the convolutional layer, the short and long term recurrent layers. Dropout helps to prevent overfitting. *Note: Must have value 0 >= x <= 1*
 
-**CNN hidden units:** How many hidden units will be in the convultional layer.
+**CNN Hidden Units:** How many hidden units will be in the convultional layer.
 
-**RNN hidden units:** How many hidden units will be in the the hidden state in the short and long term Gated Recurrent Units (GRU) the network uses for recurrent layers.
+**RNN Hidden Units:** How many hidden units will be in the the hidden state in the short and long term Gated Recurrent Units (GRU) the network uses for recurrent layers.
 
-**Short-RNN Window size:** How big a window that should be predicted by th. For example, if the window was 24 * 7, in a dataset where each time-step is one hour, the RNN would train predicting the next hour in 24 * 7 time-steps, see how right it were in these 24 * 7 predictions and adjusts its weight. This will repeat for the whole training dataset.  
+**Short-RNN Window Size:** How big a window that should be predicted by th. For example, if the window was 24 * 7, in a dataset where each time-step is one hour, the RNN would train predicting the next hour in 24 * 7 time-steps, see how right it were in these 24 * 7 predictions and adjusts its weight. This will repeat for the whole training dataset.  
 
-**Long-RNN Window size:** How many time steps it should skip in the RNN-skip network. For a dataset where one input corresponds to a hour, 24 skip time-steps would mean that RNN-skip would train predicting time-steps where one time-step corresponds to one day.
+**Long-RNN Window Size:** How many time steps it should skip in the RNN-skip network. For a dataset where one input corresponds to a hour, 24 skip time-steps would mean that RNN-skip would train predicting time-steps where one time-step corresponds to one day.
 
-**Highway window:** How many hidden units the highway window linear layer should use.
+**Highway Window:** How many hidden units the highway window linear layer should use.
 
 ## Buttons:
 
