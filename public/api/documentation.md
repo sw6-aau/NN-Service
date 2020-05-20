@@ -28,7 +28,7 @@
 
 **CNN Hidden Units:** How many hidden units will be in the convultional layer.
 
-**Short-RNN Hidden Units:** How many hidden units will be in the the hidden state in the short and long term Gated Recurrent Units (GRU) the network uses for recurrent layers.
+**Short-RNN Hidden Units:** How many hidden units will be in the the hidden state in the short term Gated Recurrent Units (GRU) the network uses.
 
 **Short-RNN Window Size:** How big a window that should be predicted by th. For example, if the window was 24 * 7, in a dataset where each time-step is one hour, the RNN would train predicting the next hour in 24 * 7 time-steps, see how right it were in these 24 * 7 predictions and adjusts its weight. This will repeat for the whole training dataset.  
 
