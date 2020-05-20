@@ -2,7 +2,7 @@ import werkzeug
 from flask import Flask, send_file, request, Response
 from flask_restful import Resource, Api, reqparse
 from flask_cors import CORS
-from storageFunctions import ValidateFileExist, ValidateFileName, WriteToPublic, GetTextFromPublic, GetJsonFromPublic, GetJsonFromPrivate, GetFileNamesInFolder
+from storageFunctions import GetTextFromPublic, GetJsonFromPublic
 from backendFunctions import HandleRenderPost, HandleData
 
 # Setup
@@ -76,59 +76,6 @@ class Data(Resource):
         args = parser.parse_args()
         return HandleData(args)
 
-# The "/storage/add" endpoint
-class StorageAdd(Resource):
-    def post(self):
-        parser = reqparse.RequestParser()
-        parser.add_argument("fileName")
-        parser.add_argument("key")
-        args = parser.parse_args()
-        fileData = request.files['fileData']
-
-        if not ValidateFileName(args["fileName"]) or not CheckAPIKey(args["key"]):
-            return "Invalid request/key!", 404
-        else:
-            return WriteToPublic("storage", fileData, args["fileName"])
-
-# The "/storage/get" endpoint
-class StorageGet(Resource):
-    def get(self):
-        parser = reqparse.RequestParser()
-        parser.add_argument("fileName")
-        parser.add_argument("key")
-        args = parser.parse_args()
-
-        if not ValidateFileName(args["fileName"]) or not ValidateFileExist("storage", args["fileName"], "public/") or not CheckAPIKey(args["key"]):
-           return "Invalid request/key!", 404
-        else:
-            try:
-                return send_file("public/storage/" + args["fileName"], attachment_filename=args["fileName"])
-            except Exception as e:
-                return str(e), 404
-
-# The "/storage/get-all-names" endpoint
-class StorageGetAllNames(Resource):
-    def get(self):
-        parser = reqparse.RequestParser()
-        parser.add_argument("key")
-        args = parser.parse_args()
-
-        if CheckAPIKey(args["key"]):
-            return GetFileNamesInFolder("storage")
-        else:
-            return "Invalid key!", 404
-
-# Check API key
-def CheckAPIKey(key):
-    if key == None:
-        return False
-    privateData = GetJsonFromPrivate("noGithub", "productionData.json")
-    apiKey = privateData["apiKey"] 
-    if str(key) == str(apiKey):
-        return True
-    else:
-        return False
-
 # The "/combined" endpoint
 class Combined(Resource):
     def post(self):
@@ -164,9 +111,6 @@ api.add_resource(Fields, "/fields")
 api.add_resource(Readme, "/readme")
 api.add_resource(Render, "/render")
 api.add_resource(Data, "/data")
-api.add_resource(StorageAdd, "/storage/add")
-api.add_resource(StorageGet, "/storage/get")
-api.add_resource(StorageGetAllNames, "/storage/get-all-names")
 api.add_resource(Combined, "/combined")
 
 # Start connection
