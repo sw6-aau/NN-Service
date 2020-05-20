@@ -98,11 +98,6 @@
                                     "fields": []
                                 },
                                 {
-                                    "name": "Preset 2",
-                                    "value": "p2",
-                                    "fields": []
-                                },
-                                {
                                     "name": "Manual-mode",
                                     "value": "m",
                                     "fields": [
@@ -120,31 +115,31 @@
                                         },
                                         {
                                             "name": "hid_cnn",
-                                            "label": "Autoencoder CNN hidden units",
+                                            "label": "CNN Hidden Units",
                                             "default": 50,
                                             "type": "input-number"
                                         },
                                         {
                                             "name": "hid_rnn",
-                                            "label": "RNN hidden units",
+                                            "label": "RNN Hidden Units",
                                             "default": 50,
                                             "type": "input-number"
                                         },
                                         {
                                             "name": "window_rnn",
-                                            "label": "RNN window size",
+                                            "label": "Short-RNN Window Size",
                                             "default": 168,
                                             "type": "input-number"
                                         },
                                         {
                                             "name": "windows_hw",
-                                            "label": "Highway window",
+                                            "label": "Highway Window",
                                             "default": 24,
                                             "type": "input-number"
                                         },
                                         {
                                             "name": "skip_rnn",
-                                            "label": "Skip RNN",
+                                            "label": "Long-RNN Window Size",
                                             "default": 24,
                                             "type": "input-number"
                                         }
@@ -205,11 +200,6 @@
                                     "fields": []
                                 },
                                 {
-                                    "name": "Preset 2",
-                                    "value": "p2",
-                                    "fields": []
-                                },
-                                {
                                     "name": "Manual-mode",
                                     "value": "m",
                                     "fields": [
@@ -227,31 +217,31 @@
                                         },
                                         {
                                             "name": "hid_cnn",
-                                            "label": "Autoencoder CNN hidden units",
+                                            "label": "CNN Hidden Units",
                                             "default": 50,
                                             "type": "input-number"
                                         },
                                         {
                                             "name": "hid_rnn",
-                                            "label": "RNN hidden units",
+                                            "label": "RNN Hidden Units",
                                             "default": 50,
                                             "type": "input-number"
                                         },
                                         {
                                             "name": "window_rnn",
-                                            "label": "RNN window size",
+                                            "label": "Short-RNN Window Size",
                                             "default": 168,
                                             "type": "input-number"
                                         },
                                         {
                                             "name": "windows_hw",
-                                            "label": "Highway window",
+                                            "label": "Highway Window",
                                             "default": 24,
                                             "type": "input-number"
                                         },
                                         {
                                             "name": "skip_rnn",
-                                            "label": "Skip RNN",
+                                            "label": "Long-RNN Window Size",
                                             "default": 24,
                                             "type": "input-number"
                                         }
