@@ -138,7 +138,7 @@
                                             "type": "input-number"
                                         },
                                         {
-                                            "name": "skip_rnn",
+                                            "name": "hid_skip_rnn",
                                             "label": "Long-RNN Window Size",
                                             "default": 24,
                                             "type": "input-number"
@@ -240,7 +240,7 @@
                                             "type": "input-number"
                                         },
                                         {
-                                            "name": "skip_rnn",
+                                            "name": "hid_skip_rnn",
                                             "label": "Long-RNN Window Size",
                                             "default": 24,
                                             "type": "input-number"
