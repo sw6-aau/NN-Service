@@ -62,7 +62,7 @@ class Render(Resource):
         parser.add_argument("hid_rnn")
         parser.add_argument("window_rnn")
         parser.add_argument("windows_hw")
-        parser.add_argument("hid_skip_rnn")
+        parser.add_argument("skip_rnn")
         args = parser.parse_args()
         renderHTML = HandleRenderPost(args)
 
@@ -95,7 +95,7 @@ class Combined(Resource):
         parser.add_argument("hid_rnn")
         parser.add_argument("window_rnn")
         parser.add_argument("windows_hw")
-        parser.add_argument("hid_skip_rnn")
+        parser.add_argument("skip_rnn")
         args = parser.parse_args()
         renderHTML = HandleRenderPost(args)
 

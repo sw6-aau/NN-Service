@@ -80,10 +80,7 @@ def HandleRenderPost(args):
         predictParams = MakePredictParams(args)
         url = str(noGithub["predictURL"]) + str(ConvertArgsToParams(predictParams))
         predictReq = requests.get(url)
-        try:
-            predictDict = json.loads(predictReq.text)
-        except ValueError as e:
-            return ReturnErrorResponse(e)
+        predictDict = json.loads(predictReq.text)
         predictID = re.sub("[^0-9a-zA-Z_\- ]", '', predictDict["predictid"])
         if not ValidateStringNoSymbol(predictID):
             return ReturnErrorResponse("Failed in predict stage: Invalid predictID")
@@ -213,7 +210,7 @@ def MakeRegisterParams(args):
     trainParams["hid_rnn"] = args["hid_rnn"]
     trainParams["window_rnn"] = args["window_rnn"]
     trainParams["windows_hw"] = args["windows_hw"]
-    trainParams["hid_skip_rnn"] = args["hid_skip_rnn"]
+    trainParams["skip_rnn"] = args["skip_rnn"]
     return trainParams
 
 # Take out the params needed for /predict
@@ -233,7 +230,7 @@ def FillPresetValues(args, presetName):
     args["hid_rnn"] = presetArr[3]
     args["window_rnn"] = presetArr[4]
     args["windows_hw"] = presetArr[5]
-    args["hid_skip_rnn"] = presetArr[6]
+    args["skip_rnn"] = presetArr[6]
     return args
 
 # Make a build ID HTML chart
@@ -291,7 +288,7 @@ def ValidationOfRenderArgs(args):
             checks.append(ValidateRenderNumber(args["hid_rnn"]))
             checks.append(ValidateRenderNumber(args["window_rnn"]))
             checks.append(ValidateRenderNumber(args["windows_hw"]))
-            checks.append(ValidateRenderNumber(args["hid_skip_rnn"]))
+            checks.append(ValidateRenderNumber(args["skip_rnn"]))
     
     if args["option"] == "tp":
         checks.append(ValidateStringNoSymbol(args["file_settings"]))
