@@ -29,11 +29,11 @@ Example data-sets can be found here: https://github.com/sw6-aau/multvariant-time
 
 **CNN Hidden Units:** How many hidden units will be in the convultional layer.
 
-**Short-RNN Hidden Units:** How many hidden units will be in the the hidden state in the short term Gated Recurrent Units (GRU) the network uses.
+**Recurrent Layer Hidden Units:** How many hidden units will be in the the hidden state in the short term Gated Recurrent Units (GRU) the network uses.
 
-**Short-RNN Window Size:** How big a window that should be predicted by th. For example, if the window was 24 * 7, in a dataset where each time-step is one hour, the RNN would train predicting the next hour in 24 * 7 time-steps, see how right it were in these 24 * 7 predictions and adjusts its weight. This will repeat for the whole training dataset.  
+**Recurrent Layer Window Size:** How big a window that should be predicted by the standard recurrent layer. For example, if the window was 24 * 7, in a dataset where each time-step is one hour, the RNN would train predicting the next hour in 24 * 7 time-steps, see how right it were in these 24 * 7 predictions and adjusts its weight.
 
-**Long-RNN Window Size:** How many time steps it should skip in the RNN-skip network. For a dataset where one input corresponds to a hour, 24 skip time-steps would mean that RNN-skip would train predicting time-steps where one time-step corresponds to one day.
+**Recurrent-skip window size:** How many time steps it should skip in the RNN-skip network. For a dataset where one input corresponds to a hour, a skip window size of 24 and recurrent layer window size of 168 (24*7) time-steps would mean that the network will update the prediction weights of each day in the week only with input received on the same days. Mondays will consider timestamps from mondays, Tuesdays will consider timestamps from Tuesdays and so on.
 
 **Highway Window:** How many hidden units the highway window linear layer should use.
 
