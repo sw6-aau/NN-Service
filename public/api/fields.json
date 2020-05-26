@@ -121,13 +121,13 @@
                                         },
                                         {
                                             "name": "hid_rnn",
-                                            "label": "RNN Hidden Units",
+                                            "label": "Recurrent Layer Hidden Units",
                                             "default": 50,
                                             "type": "input-number"
                                         },
                                         {
                                             "name": "window_rnn",
-                                            "label": "Short-RNN Window Size",
+                                            "label": "Recurrent Layer Window Size",
                                             "default": 168,
                                             "type": "input-number"
                                         },
@@ -139,7 +139,7 @@
                                         },
                                         {
                                             "name": "hid_skip_rnn",
-                                            "label": "Long-RNN Window Size",
+                                            "label": "Recurrent-skip window size",
                                             "default": 24,
                                             "type": "input-number"
                                         }
@@ -223,13 +223,13 @@
                                         },
                                         {
                                             "name": "hid_rnn",
-                                            "label": "RNN Hidden Units",
+                                            "label": "Recurrent Layer Hidden Units",
                                             "default": 50,
                                             "type": "input-number"
                                         },
                                         {
                                             "name": "window_rnn",
-                                            "label": "Short-RNN Window Size",
+                                            "label": "Recurrent Layer Window Size",
                                             "default": 168,
                                             "type": "input-number"
                                         },
@@ -241,7 +241,7 @@
                                         },
                                         {
                                             "name": "hid_skip_rnn",
-                                            "label": "Long-RNN Window Size",
+                                            "label": "Recurrent-skip window size",
                                             "default": 24,
                                             "type": "input-number"
                                         }
